@@ -1,4 +1,4 @@
-#/usr/bin/sh
+#!/bin/sh
 
 cd $APPDIR
-gunicorn sample:api >$LOGDIR/out.log 2>$LOGDIR/err.log
+gunicorn -b 0.0.0.0:8000 sample:api >$LOGDIR/out.log 2>$LOGDIR/err.log

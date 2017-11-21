@@ -7,7 +7,7 @@ ENV LOGDIR /home/developer/log
 
 COPY config/apt.conf /etc/apt/apt.conf
 
-RUN apt-get update && apt-get install -y wget mongodb sqlite3 python3 python3-pip
+RUN apt-get update && apt-get install -y wget curl mongodb sqlite3 python3 python3-pip 
 RUN pip3 install falcon gunicorn
 RUN useradd -m developer
 
