@@ -1,0 +1,10 @@
+- Lukas Arnold
+    - Queries
+- Patrick Bucher
+    - Migration
+- Christopher James Christensen
+    - Web-Interface
+- Jonas Kaiser
+    - ???
+- Melvin Werthmüller
+    - Queries
