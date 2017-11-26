@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
 
 import falcon
+import logging
+import os
 
 class QuoteResource:
+    def __init__(self):
+        self.logger = logging.getLogger('Quote')
+        self.logger.setLevel(logging.DEBUG)
+        logdir = os.environ['LOGDIR'] 
+        logpath = os.path.join(logdir, 'falcon.log')
+        fh = logging.FileHandler(logpath)
+        self.logger.addHandler(fh)
+
     def on_get(self, req, resp):
         """Handles GET requests"""
         quote = {
@@ -12,7 +22,7 @@ class QuoteResource:
             ),
             'author': 'Grace Hopper'
         }
-
+        self.logger.debug('GET on /quote')
         resp.media = quote
 
 api = falcon.API()

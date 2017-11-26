@@ -13,12 +13,12 @@ RUN pip3 install falcon gunicorn pymongo sqlite3client
 RUN useradd -m developer
 
 RUN mkdir -p $APPDIR && mkdir -p $DATADIR && mkdir -p $LOGDIR && mkdir -p $BINDIR
-COPY python/*.py $APPDIR/
-COPY config/server-start.sh $BINDIR/
-RUN chown -R developer:developer $APPDIR $DATADIR $LOGDIR $BINDIR
-RUN chmod +x $BINDIR/server-start.sh
 COPY data/database.sqlite.gz $DATADIR/
 RUN gunzip $DATADIR/database.sqlite.gz
+COPY python/*.py $APPDIR/
+COPY bin/*.sh $BINDIR/
+RUN chown -R developer:developer $APPDIR $DATADIR $LOGDIR $BINDIR
+RUN chmod +x $BINDIR/*.sh
 
 USER developer
 
