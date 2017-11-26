@@ -19,8 +19,8 @@ clean:
 	docker rm -f `docker ps -qa`
 	rm -f .ran .migrated
 
-purge: .built
-	docker rmi -f `docker images -qa`
-	rm -f data/sqlite.database
+purge:
+	rm -f data/database.sqlite
 	rm -f .built .migrated .ran
 	rm -rf data/.mongo
+	docker rmi -f `docker images -qa`
