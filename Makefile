@@ -16,8 +16,8 @@ server: .built .migrated
 	docker run -it --name mongomir -v "`pwd`"/data:/home/developer/data -p 8000:8000 --rm mongomir
 
 clean:
-	docker rm -f `docker ps -qa`
 	rm -f .ran .migrated
+	docker rm -f `docker ps -qa`
 
 purge:
 	rm -f data/database.sqlite
