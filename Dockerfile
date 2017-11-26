@@ -17,10 +17,9 @@ RUN useradd -m developer
 RUN mkdir -p $APPDIR && mkdir -p $DATDIR && mkdir -p $LOGDIR && mkdir -p $BINDIR
 COPY data/database.sqlite.gz $DATDIR/
 RUN gunzip $DATDIR/database.sqlite.gz
-COPY python/*.py $APPDIR/
+COPY webapp/*.py $APPDIR/
 COPY bin/*.sh $BINDIR/
 RUN chown -R developer:developer /home/developer
-#RUN chown -R developer:developer $APPDIR $DATDIR $LOGDIR $BINDIR
 RUN chmod +x $BINDIR/*.sh
 
 USER developer
