@@ -6,12 +6,20 @@ DBS project using MongoDB, Python and the [European Soccer Database](https://www
 
 Build the image:
 
-    docker build -t mongomir .
+    make build
 
 Run the image (interactive session):
 
-    docker run -it mongomir bash
+    make run
 
 Run the image (as a web server):
 
-    docker run -d -p 8000:8000 mongomir
+    make server
+
+Remove the container:
+
+    make clean
+
+Remove _all_ Docker images:
+
+    make purge
