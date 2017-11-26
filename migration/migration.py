@@ -4,31 +4,57 @@ import sqlite3
 import os
 from datetime import datetime
 
-def extract_players(prefix, cursor, row):
-    players = []
-    for i in range(1, 12):
-        field = prefix + str(i)
-        player_id = row[field]
-        # TODO use cursor to fetch player name and birthday
-        players.append(player_id)
-    return players
+datdir = os.environ['DATDIR']
+db = os.path.join(datdir, 'database.sqlite')
+connection = sqlite3.connect(db)
+connection.row_factory = sqlite3.Row
 
-def to_match_dict(cursor, row):
+def main():
+    matches = []
+    for row in connection.cursor().execute(get_match_query()):
+        match = to_match_dict(row)
+        matches.append(match)
+        print(match)
+
+def to_match_dict(row):
     match = {}
     full_league = row['league']
     match['league'] = full_league[full_league.index(' '):].strip()
     match['country'] = full_league[:full_league.index(' ')].strip()
     match['season'] = row['season']
-    match_datetime = datetime.strptime(row['date'], '%Y-%m-%d %H:%M:%S')
-    match['date'] = match_datetime.strftime('%d.%m.%Y')
+    match['date'] = to_date_str(row['date'])
     match['round'] = row['stage']
     match['home_team'] = row['home_team_name'].encode('utf-8')
     match['away_team'] = row['away_team_name'].encode('utf-8')
     match['home_goals'] = row['home_team_goal']
     match['away_goals'] = row['away_team_goal']
-    match['home_players'] = extract_players('hp', cursor, row)
-    match['away_players'] = extract_players('ap', cursor, row)
+    match['home_players'] = extract_players('hp', row)
+    match['away_players'] = extract_players('ap', row)
     return match
+
+def extract_players(prefix, match_row):
+    players = []
+    for i in range(1, 12):
+        player = {}
+        field = prefix + str(i)
+        player_id_str = match_row[field]
+        if player_id_str != None:
+            player_id = (int(match_row[field]),)
+            player_query = """
+                select player_name as name, birthday
+                from Player
+                where player_api_id = ?;
+            """
+            cursor = connection.cursor()
+            cursor.execute(player_query, player_id)
+            player_row = cursor.fetchone()
+            player['name'] = player_row['name']
+            player['birthday'] = to_date_str(player_row['birthday'])
+        else:
+            player = None
+        players.append(player)
+
+    return players
 
 def get_match_query():
     return """
@@ -52,19 +78,9 @@ def get_match_query():
         order by league_id asc, stage asc;
     """
 
-def main():
-    datdir = os.environ['DATDIR']
-    db = os.path.join(datdir, 'database.sqlite')
-    connection = sqlite3.connect(db)
-    connection.row_factory = sqlite3.Row
-    cursor = connection.cursor()
-
-    matches = []
-    for row in cursor.execute(get_match_query()):
-        match = to_match_dict(cursor, row)
-        matches.append(match)
-
-    print(matches)
+def to_date_str(datetime_str):
+    dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+    return dt.strftime('%d.%m.%Y')
 
 if __name__ == '__main__':
     main()
