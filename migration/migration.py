@@ -10,17 +10,36 @@ connection = sqlite3.connect(db)
 connection.row_factory = sqlite3.Row
 
 def main():
-    matches = []
+    all_players = load_all_players()
     for row in connection.cursor().execute(get_match_query()):
-        match = to_match_dict(row)
-        matches.append(match)
+        match = to_match_dict(row, all_players)
         print(match)
+        # TODO: write match into MongoDB
+    league_query = 'select id, name from League'
+    for row in connection.cursor().execute(league_query):
+        league = to_league_dict(row)
+        print(league)
+        # TODO: write league into MongoDB
 
-def to_match_dict(row):
+def load_all_players():
+    players = {}
+    players_query = """
+        select player_api_id as id, player_name as name, birthday
+        from Player
+    """
+    cursor = connection.cursor()
+    for row in cursor.execute(players_query):
+        id = int(row['id'])
+        name = row['name']
+        birthday = to_date_str(row['birthday'])
+        players[id] = {'name': name, 'birthday': birthday}
+
+    return players
+
+def to_match_dict(row, all_players):
     match = {}
     full_league = row['league']
-    match['league'] = full_league[full_league.index(' '):].strip()
-    match['country'] = full_league[:full_league.index(' ')].strip()
+    match['league_id'] = row['league_id']
     match['season'] = row['season']
     match['date'] = to_date_str(row['date'])
     match['round'] = row['stage']
@@ -28,37 +47,36 @@ def to_match_dict(row):
     match['away_team'] = row['away_team_name'].encode('utf-8')
     match['home_goals'] = row['home_team_goal']
     match['away_goals'] = row['away_team_goal']
-    match['home_players'] = extract_players('hp', row)
-    match['away_players'] = extract_players('ap', row)
+    match['home_players'] = extract_players('hp', row, all_players)
+    match['away_players'] = extract_players('ap', row, all_players)
     return match
 
-def extract_players(prefix, match_row):
-    players = []
+def to_league_dict(row):
+    league = {}
+    # the league name contains the country
+    country_league = split_league_name(row['name'])
+    league['id'] = row['id']
+    league['league'] = country_league[0]
+    league['country'] = country_league[1]
+    return league
+
+def extract_players(prefix, match_row, all_players):
+    match_players = []
     for i in range(1, 12):
         player = {}
         field = prefix + str(i)
         player_id_str = match_row[field]
         if player_id_str != None:
-            player_id = (int(match_row[field]),)
-            player_query = """
-                select player_name as name, birthday
-                from Player
-                where player_api_id = ?;
-            """
-            cursor = connection.cursor()
-            cursor.execute(player_query, player_id)
-            player_row = cursor.fetchone()
-            player['name'] = player_row['name']
-            player['birthday'] = to_date_str(player_row['birthday'])
-        else:
-            player = None
-        players.append(player)
+            player_id = int(player_id_str)
+            player = all_players[player_id]
+            if player != None:
+                match_players.append(player)
 
-    return players
+    return match_players
 
 def get_match_query():
     return """
-        select Match.id, league.name as league, season, stage, date,
+        select Match.id, league.name as league, league_id, season, stage, date,
         home_team.team_long_name as home_team_name, home_team.team_short_name,
         away_team.team_long_name as away_team_name, away_team.team_short_name,
         home_team_api_id, away_team_api_id, home_team_goal, away_team_goal,
@@ -81,6 +99,13 @@ def get_match_query():
 def to_date_str(datetime_str):
     dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
     return dt.strftime('%d.%m.%Y')
+
+def split_league_name(country_league):
+    split = country_league.index(' ')
+    country = country_league[split:].strip()
+    league = country_league[:split].strip()
+    return (country, league)
+
 
 if __name__ == '__main__':
     main()
