@@ -4,8 +4,6 @@ import sqlite3
 import os
 from datetime import datetime
 
-cursor = None
-
 def extract_players(prefix, cursor, row):
     players = []
     for i in range(1, 12):
