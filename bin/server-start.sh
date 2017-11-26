@@ -3,11 +3,11 @@
 $BINDIR/mongo-start.sh &
 $BINDIR/gunicorn-start.sh &
 
-LOGFILE="$LOGDIR/falcon.log"
+SERVER_LOG="$LOGDIR/falcon.out"
 
-while [ ! -f "$LOGFILE" ] ;
+while [ ! -f "$SERVER_LOG" ] ;
 do
     sleep 1
 done
 
-tail -f "$LOGFILE"
+tail -f "$SERVER_LOG"

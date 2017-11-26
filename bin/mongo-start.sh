@@ -1,3 +1,4 @@
 #!/bin/sh
 
-/usr/bin/mongod --dbapth $DATDIR >$LOGDIR/mongo.out 2>$LOGDIR/mongo.err
+mkdir -p $DATDIR/.mongo
+/usr/bin/mongod --port 27017 --dbpath $DATDIR/.mongo >$LOGDIR/mongo.out 2>$LOGDIR/mongo.err

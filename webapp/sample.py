@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 
 import falcon
+from pymongo import MongoClient
 import logging
 import os
+import pprint
 
-class QuoteResource:
+client = MongoClient()
+mongo_db = client.soccer
+
+class MatchResource:
     def __init__(self):
-        self.logger = logging.getLogger('Quote')
+        self.logger = logging.getLogger('Match')
         self.logger.setLevel(logging.DEBUG)
         logdir = os.environ['LOGDIR'] 
         logpath = os.path.join(logdir, 'falcon.log')
@@ -15,15 +20,8 @@ class QuoteResource:
 
     def on_get(self, req, resp):
         """Handles GET requests"""
-        quote = {
-            'quote': (
-                "I've always been more interested in "
-                "the future than in the past."
-            ),
-            'author': 'Grace Hopper'
-        }
-        self.logger.debug('GET on /quote')
-        resp.media = quote
+        self.logger.debug('GET on /match')
+        resp.media = pprint.pformat(mongo_db.matches.find_one(), indent = 4)
 
 api = falcon.API()
-api.add_route('/quote', QuoteResource())
+api.add_route('/match', MatchResource())

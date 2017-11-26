@@ -1,25 +1,43 @@
 #!/usr/bin/env python3
 
 import sqlite3
+from pymongo import MongoClient
 import os
 from datetime import datetime
 
+# SQLite connection and setup
 datdir = os.environ['DATDIR']
-db = os.path.join(datdir, 'database.sqlite')
-connection = sqlite3.connect(db)
+sqlite_db = os.path.join(datdir, 'database.sqlite')
+connection = sqlite3.connect(sqlite_db)
 connection.row_factory = sqlite3.Row
+
+# MongoDB connection and setup
+client = MongoClient()
+mongo_db = client.soccer
+mongo_db.matches.remove({})
+mongo_db.leagues.remove({})
 
 def main():
     all_players = load_all_players()
+
+    n_matches = 0
     for row in connection.cursor().execute(get_match_query()):
         match = to_match_dict(row, all_players)
-        print(match)
-        # TODO: write match into MongoDB
+        matches = mongo_db.matches
+        match_id = matches.insert_one(match).inserted_id
+        n_matches = n_matches + 1
+        print('inserted match as', match_id, 'into MongoDB')
+
     league_query = 'select id, name from League'
+    n_leagues = 0
     for row in connection.cursor().execute(league_query):
         league = to_league_dict(row)
-        print(league)
-        # TODO: write league into MongoDB
+        leagues = mongo_db.leagues
+        league_id = leagues.insert_one(league).inserted_id
+        n_leagues = n_leagues + 1
+        print('inserted league as', league_id, 'into MongoDB')
+
+    print('done, inserted %d matches and %d leagues' % (n_matches, n_leagues))
 
 def load_all_players():
     players = {}
