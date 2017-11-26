@@ -12,9 +12,40 @@ SQLite -> MongoDB
 
 ## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
 
-TODO
+- Abfragen sämtlicher Spiele, in denen ein bestimmter Spieler zum Einsatz
+  gekommen ist
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
+
+Es sollen die relationalen Entitäten `Match`, `Player`, `Player_Attributes`,
+`Team`, `Team_Attributes` zu einer JSON-Struktur namens `Match` kombiniert
+werden. Dabei werden die an einem Spiel teilnehmenden Mannschaften mit ihren
+Spielern nicht referenziert, sondern direkt mit allen relevanten Informationen
+in einer hierarchischen Struktur abgelegt:
+
+- `match`
+    - `home_team`
+        - `name`
+        - `players`
+            - `player_1`
+            - `...`
+            - `player_n`
+    - `away_team`
+        - `name`
+        - `players`
+            - `player_1`
+            - `...`
+            - `player_n`
+    - `goals_home_team`
+    - `goals_away_team`
+
+Die Entitäten `League` und `Country` sollten zudem in eine `League`-Struktur
+überführt werden:
+
+- `league`
+    - `id`
+    - `name`
+    - `country`
 
 ## Wie interagiert der Benutzer mit der Datenbank?
 
@@ -24,6 +55,20 @@ TODO: per Web-Schnittstelle
 
 ## Welches Datenmodell (ER) liegt ihrem Projekt zugrunde?
 
+Dies ist ein Auszug aus dem ER-Modell, der nur die Tabellen und Spalten enthält,
+die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
+
+- `League`
+    - TODO
+- `Match`
+- `Player`
+- `Player_Attributes`
+- `Team`
+- `Team_Attributes`
+
+Das komplette Schema ist auf
+[Kaggle](https://www.kaggle.com/hugomathien/soccer/data) ersichtlich.
+
 ## Wie wird ihr Datenmodell in Ihrer Datenbank in ein Schema übersetzt?
 
 # Datenbanksprachen
@@ -32,7 +77,10 @@ TODO: per Web-Schnittstelle
 
 # Konsistenzsicherung
 
-## Wie wird die Datensicherheit gewährtleistet?
+## Wie wird die Datensicherheit gewährleistet?
+
+Gar nicht; die Daten sind nicht sensibel. Evtl. Userkonfiguration, sodass nur
+ein Benutzer die Migration vornehmen kann, der Enduser aber nur abfragen kann.
 
 ## Wie können Transaktionen parallel/konkurrierend verarbeitet werden?
 
