@@ -12,11 +12,16 @@ Run the image (interactive session):
 
     make run
 
-Run the image (as a web server):
+Run the migration:
+
+    make migration
+
+Run the image (as a web server, this will build the image and perform the
+migration, if necessary):
 
     make server
 
-Remove the container:
+Remove _all_ Docker containers:
 
     make clean
 
