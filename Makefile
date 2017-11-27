@@ -2,25 +2,20 @@
 	docker build -t mongomir .
 	gunzip -f -k data/database.sqlite.gz
 	touch .built
-	rm -rf .migrated .ran
+	rm -f .ran
 
 .ran run: .built
-	docker run -it --name mongomir -v "`pwd`"/data:/home/developer/data --rm mongomir bash
+	docker run -it --name mongomir --rm mongomir bash
 	touch .ran
 
-.migrated migration: .built
-	docker run -it --name mongomir -v "`pwd`"/data:/home/developer/data --rm mongomir /home/developer/bin/migration.sh
-	touch .migrated
-
-server: .built .migrated
-	docker run -it --name mongomir -v "`pwd`"/data:/home/developer/data -p 8000:8000 --rm mongomir
+server: .built
+	docker run -it --name mongomir -p 8000:8000 --rm mongomir
 
 clean:
-	rm -f .ran .migrated
+	rm -f .ran 
 	docker rm -f `docker ps -qa`
 
 purge:
 	rm -f data/database.sqlite
-	rm -f .built .migrated .ran
-	rm -rf data/.mongo
+	rm -f .built .ran
 	docker rmi -f `docker images -qa`
