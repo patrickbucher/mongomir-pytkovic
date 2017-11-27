@@ -4,7 +4,7 @@
 
 DBS project using MongoDB, Python and the [European Soccer Database](https://www.kaggle.com/hugomathien/soccer) from Kaggle.
 
-Just run `make server` and visit [http://localhost:8000/match](http://localhost:8000/match).
+Just run `make server` and visit [http://192.168.99.100:8000/match](http://192.168.99.100:8000/match) (the IP address might be different, run `docker-machine ip` to find it out).
 
 ## Docker
 
@@ -15,10 +15,6 @@ Build the image:
 Run the image (interactive bash session):
 
     make run
-
-Run the migration:
-
-    make migration
 
 Run the image (as a web server, this will build the image and perform the
 migration, if necessary):
