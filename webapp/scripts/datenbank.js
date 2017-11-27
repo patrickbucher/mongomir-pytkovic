@@ -1,12 +1,21 @@
 $(document).ready(function() {
 
 
-    $('.input').on('keyup', function(event) {
-        var currentInput = $(this).val();
-        // $.get(url('http://localhost:8000/match'), {
-        //
-        // });
-        console.log(currentInput);
+    $('.search-btn').on('click', function(event) {
+        var data = 'birthday';
+        $.ajax({
+            url: 'https://localhost:8000/match',
+            type: "GET",
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                alert(data);
+            },
+            fail: function (data) {
+                alert(data);
+            }
+        });
+        console.log(data);
     });
 
 
