@@ -2,7 +2,7 @@
 	docker build -t mongomir .
 	gunzip -f -k data/database.sqlite.gz
 	touch .built
-	rm -rf .migrated .ran
+	rm -f .migrated .ran
 
 .ran run: .built
 	docker run -it --name mongomir -v "`pwd`"/data:/home/developer/data --rm mongomir bash
