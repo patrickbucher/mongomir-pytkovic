@@ -1,24 +1,17 @@
 $(document).ready(function() {
-
-
     $('.search-btn').on('click', function(event) {
-        var data = 'birthday';
         $.ajax({
-            url: 'https://localhost:8000/match',
+            url: 'http://192.168.99.100:8000/match',
             type: "GET",
-            data: data,
             dataType: 'json',
+            crossDomain: true,
             success: function (data) {
-                alert(data);
+                console.log('success');
+                console.dir(data);
             },
             fail: function (data) {
-                alert(data);
+                console.log('error');
             }
         });
-        console.log(data);
     });
-
-
-
-
 });
