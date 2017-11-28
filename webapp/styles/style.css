@@ -1,0 +1,114 @@
+h1, h2, h3 {
+    font-family: 'Slabo 27px';
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5vw;
+}
+
+h2 {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Roboto', sans-serif;
+    font-weight: lighter;
+    font-size: 1.3vw;
+    color: white;
+    margin: 0;
+    margin-left: 1%;
+}
+
+h3 {
+    position: relative;
+    font-family: 'Roboto', sans-serif;
+    font-weight: lighter;
+    font-size: 1vw;
+    color: white;
+    margin: 0;
+    margin-left: 1%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.container {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    background: rgba(211, 211, 211, 1);
+}
+
+.main-window {
+    position: relative;
+    width: 90%;
+    height: 90%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    display: grid;
+    grid-template-rows: 1fr 5fr;
+    grid-row-gap: 5%;
+}
+
+.search-form input {
+    position: relative;
+    width: 50%;
+    font-family: 'Slabo 27px';
+    font-size: 2vw;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+
+    outline: none;
+}
+
+.result-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr 9fr;
+}
+
+.result-name {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: rgba(199, 149, 99, 1);
+}
+
+.result-view {
+    position: absolute;
+    width: 100%;
+}
+
+.result-values {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: rgba(220, 220, 220, 1);
+
+    overflow: scroll;
+}
+
+.result {
+    position: relative;
+    width: 98%;
+    height: 10%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    left: 50%;
+    transform: translate(-50%);
+
+    display: grid;
+    grid-template-rows: 1fr 5fr;
+
+    background: rgba(200, 200, 200, 1);
+}
+
+.playFor {
+    background: rgba(150, 150, 150, 1);
+}
