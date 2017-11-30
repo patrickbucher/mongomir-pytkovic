@@ -213,6 +213,20 @@ Neben den Debian-Packages werden folgende Python-Packages installiert:
 - `pymongo`: Eine Library zum Interagieren mit einer MongoDB
 - `sqlite3client`: Eine Library zum Interagieren mit einer SQLite-Datenbank
 
+Zur Ausführung der Migration und des Webservers wird ein Benutzer namens
+`developer` angelegt. Das Migrationsskript und die Skripts für die REST-API
+werden in den Docker container kopiert. Das `data`-Verzeichnis wird als Volume
+eingehängt (im Mac-Branch wird stattdessen die Datenbank in den Container
+hineinkopiert, da es mit Docker auf Mac Probleme gibt, wenn MongoDB auf ein
+Volume schreibend zugreifen möchte).
+
+Die REST-API wird über den Port 8000 freigegeben. Beim Start des Containers wird
+das Skript `server-start.sh` gestartet, das sowohl die MongoDB-Instanz als auch
+den Webserver startet. Dabei wird das Log der Web-Applikation laufend auf die
+Standardausgabe geschrieben. (Der Container läuft interaktiv und nicht als
+Daemon, sodass die Logs sofort ersichtlich sind und der Container per Ctrl-C
+wieder beendet werden kann.)
+
 ## Wie kann die Effizienz von Datenanfragen optimiert werden?
 
 - Wie bereits bei der Migration beschrieben wurde, werden die Spieler zu Beginn
