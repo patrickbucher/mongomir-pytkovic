@@ -1,10 +1,8 @@
 # Mongomir Pytkovic
 
-**Mac users are required to switch to the `mac` branch!**
-
 DBS project using MongoDB, Python and the [European Soccer Database](https://www.kaggle.com/hugomathien/soccer) from Kaggle.
 
-Just run `make server` and visit [http://localhost:8000/match](http://localhost:8000/match).
+Just run `make server` and visit [http://localhost:8000/match](http://localhost:8000/match). (Mac users need to set up port forwarding to their docker machine.)
 
 ## Docker
 
@@ -16,7 +14,7 @@ Run the image (interactive bash session):
 
     make run
 
-Run the migration:
+Perform the migration:
 
     make migration
 
