@@ -7,6 +7,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function (data) {
                 console.log('success');
+                console.log(data);
             },
             fail: function (data) {
                 console.log('error');
