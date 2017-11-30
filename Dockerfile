@@ -10,14 +10,14 @@ ENV MIGDIR /home/developer/migration
 COPY config/apt.conf /etc/apt/apt.conf
 COPY config/.vimrc /home/developer/
 
-RUN apt-get update && apt-get install -y wget curl mongodb sqlite3 python3 python3-pip vim
+RUN apt-get update && apt-get install -y wget curl mongodb sqlite3 python3 python3-pip webfs vim
 RUN pip3 install falcon gunicorn pymongo sqlite3client
 RUN useradd -m developer
 
 RUN mkdir -p $APPDIR && mkdir -p $DATDIR && mkdir -p $LOGDIR && mkdir -p $BINDIR
 COPY data/database.sqlite.gz $DATDIR/
 RUN gunzip $DATDIR/database.sqlite
-COPY webapp/*.py $APPDIR/
+COPY webapp $APPDIR
 COPY bin/*.sh $BINDIR/
 COPY migration/migration.py $MIGDIR/migration.py
 RUN chmod +x $MIGDIR/migration.py
@@ -26,5 +26,5 @@ RUN chmod +x $BINDIR/*.sh
 
 USER developer
 
-EXPOSE 8000
+EXPOSE 8001
 CMD ["/home/developer/bin/server-start.sh"]

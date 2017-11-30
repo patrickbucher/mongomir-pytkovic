@@ -13,14 +13,14 @@
 	touch .ran
 
 .migrated migration: .built
-	docker run -td --name mongomir -p 8000:8000 --rm mongomir
+	docker run -td --name mongomir -p 8001:8001 --rm mongomir
 	docker exec mongomir /home/developer/bin/migration.sh
 	docker commit mongomir mongomir
 	docker stop mongomir
 	touch .migrated
 
 server: .built .migrated
-	docker run -it --name mongomir -p 8000:8000 --rm mongomir
+	docker run -it --name mongomir -p 8001:8001 --rm mongomir
 
 clean:
 	rm -f .ran .migrated

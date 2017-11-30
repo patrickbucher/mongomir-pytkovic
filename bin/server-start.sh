@@ -1,9 +1,10 @@
 #!/bin/sh
 
+SERVER_LOG="$LOGDIR/webfsd.out"
+
 $BINDIR/mongo-start.sh &
 $BINDIR/gunicorn-start.sh &
-
-SERVER_LOG="$LOGDIR/falcon.out"
+webfsd -p 8001 -r $APPDIR -l "$SERVER_LOG"
 
 while [ ! -f "$SERVER_LOG" ] ;
 do
