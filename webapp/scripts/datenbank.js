@@ -1,24 +1,17 @@
 $(document).ready(function() {
-
-
     $('.search-btn').on('click', function(event) {
-        var data = 'birthday';
+        console.log('click');
         $.ajax({
-            url: 'https://localhost:8000/match',
-            type: "GET",
-            data: data,
+            url: 'http://localhost:8000/match',
+            type: 'GET',
             dataType: 'json',
             success: function (data) {
-                alert(data);
+                console.log('success');
             },
             fail: function (data) {
-                alert(data);
+                console.log('error');
             }
         });
-        console.log(data);
+        console.log('done');
     });
-
-
-
-
 });
