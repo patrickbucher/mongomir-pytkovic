@@ -4,7 +4,7 @@ $BINDIR/mongo-start.sh &
 $BINDIR/migration.sh
 $BINDIR/gunicorn-start.sh &
 
-LOGFILE="$LOGDIR/gunicorn.err"
+LOGFILE="$LOGDIR/gunicorn.out"
 
 while [ ! -f "$LOGFILE" ]
 do
