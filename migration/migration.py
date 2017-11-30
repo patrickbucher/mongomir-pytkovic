@@ -56,7 +56,6 @@ def load_all_players():
 
 def to_match_dict(row, all_players):
     match = {}
-    full_league = row['league']
     match['league_id'] = row['league_id']
     match['season'] = row['season']
     match['date'] = to_date_str(row['date'])
@@ -94,7 +93,7 @@ def extract_players(prefix, match_row, all_players):
 
 def get_match_query():
     return """
-        select Match.id, league.name as league, league_id, season, stage, date,
+        select Match.id, league_id, season, stage, date,
         home_team.team_long_name as home_team_name, home_team.team_short_name,
         away_team.team_long_name as away_team_name, away_team.team_short_name,
         home_team_api_id, away_team_api_id, home_team_goal, away_team_goal,
@@ -107,7 +106,6 @@ def get_match_query():
         away_player_7 as ap7, away_player_8 as ap8, away_player_9 as ap9,
         away_player_10 as ap10, away_player_11 as ap11
         from Match
-        join League on (Match.league_id = League.id)
         join Team home_team on (Match.home_team_api_id = home_team.team_api_id)
         join Team away_team on (Match.away_team_api_id = away_team.team_api_id)
         where not home_player_1 is null and not away_player_1 is null
