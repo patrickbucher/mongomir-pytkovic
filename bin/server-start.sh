@@ -1,14 +1,13 @@
 #!/bin/sh
 
 $BINDIR/mongo-start.sh &
-$BINDIR/migration.sh
 $BINDIR/gunicorn-start.sh &
 
-LOGFILE="$LOGDIR/gunicorn.out"
+SERVER_LOG="$LOGDIR/falcon.out"
 
-while [ ! -f "$LOGFILE" ]
+while [ ! -f "$SERVER_LOG" ] ;
 do
     sleep 1
 done
 
-tail -f "$LOGFILE"
+tail -f "$SERVER_LOG"
