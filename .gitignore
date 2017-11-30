@@ -2,3 +2,4 @@ data/.mongo/
 .built
 .ran
 .migrated
+.DS_Store
