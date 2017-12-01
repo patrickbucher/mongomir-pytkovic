@@ -17,7 +17,7 @@
 	docker exec mongomir /home/developer/bin/migration.sh
 	docker commit mongomir mongomir
 	docker stop mongomir
-	sleep 3
+	sleep 1
 	touch .migrated
 
 server: .built .migrated
