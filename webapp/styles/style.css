@@ -116,7 +116,7 @@ h3 {
 .result {
     position: relative;
     width: 98%;
-    height: 10vw;
+    height: 14vw;
     margin-top: 1%;
     margin-bottom: 1%;
     left: 50%;
@@ -128,6 +128,27 @@ h3 {
     background: rgba(200, 200, 200, 1);
 }
 
-.playFor {
+.match-date {
+    min-height: 2vw;
     background: rgba(150, 150, 150, 1);
+}
+
+.color-scheme {
+    position: absolute;
+    display: grid;
+    font-family: 'Slabo 27px';
+    font-size: 0.8vw;
+    width: 30%;
+    top: 10vw;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 1%;
+    text-align: left;
+}
+
+.color-box1 {
+    background: rgba(99, 180, 132, 1);
+}
+
+.color-box3 {
+    background: rgba(46, 133, 182, 1);
 }
