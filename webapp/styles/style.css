@@ -65,6 +65,25 @@ h3 {
     outline: none;
 }
 
+.search-btn {
+    display: inline;
+    position: absolute;
+    width: 10%;
+    height: 5%;
+    font-family: 'Arial';
+    font-size: 1.6vw;
+    text-align: center;
+    transform: translate(270%,-50%);
+    background-color: gray;
+    color: white;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    background: rgba(199, 149, 99, 1);
+}
+
 .result-box {
     position: relative;
     width: 100%;
@@ -97,7 +116,7 @@ h3 {
 .result {
     position: relative;
     width: 98%;
-    height: 10%;
+    height: 10vw;
     margin-top: 1%;
     margin-bottom: 1%;
     left: 50%;
