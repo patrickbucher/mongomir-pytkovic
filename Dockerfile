@@ -26,5 +26,5 @@ RUN chmod +x $BINDIR/*.sh
 
 USER developer
 
-EXPOSE 8001
+EXPOSE 8000 8001
 CMD ["/home/developer/bin/server-start.sh"]
