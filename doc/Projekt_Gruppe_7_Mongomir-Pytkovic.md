@@ -2,16 +2,16 @@
 
 ## Was ist der Kontext, warum ist das Projekt relevant, und worum geht es?
 
-Im Projekt «Mongomir Pytkovic» geht es darum, eine SQLite-Datenbank auf eine
+Im Projekt _Mongomir Pytkovic_ geht es darum, eine SQLite-Datenbank auf eine
 NoSQL-Datenbank zu migrieren und Anfragen auf diese NoSQL-Datenbank abzusetzen
-und darzustellen. Der Name "Mongomir Pytkovic" bezieht sich auf den
+und darzustellen. Der Name «Mongomir Pytkovic» bezieht sich auf den
 Nationaltrainer der Schweizer Fussballnationalmannschaft Vladimir Petkovic und
 die eingesetzten Technologien MongoDB und Python.
 
 Als Datenbasis wird die [European Soccer
 Database](https://www.kaggle.com/hugomathien/soccer/data) verwendet. Hierbei
 handelt es sich um ein Beispieldatenbank der Machine-Learning-Plattform und
--Community [Kaggle](https://www.kaggle.com/).  Die Datenbank soll es einem
+-Community [Kaggle](https://www.kaggle.com/). Die Datenbank soll es einem
 Trainer erlauben, Ergebnisse von Fussballspielen zu finden, in denen ein
 bestimmter Spieler beteiligt war.
 
@@ -48,10 +48,13 @@ Da die Aufgabenstellung auch eine Abfrage mit einem Join umfasst, wird
 zusätzlich die Entität `League` migriert. Zu jedem Spiel wird ein Fremdschlüssel
 zur jeweiligen Liga abgespeichert.
 
+TODO: muss der Join über die ObjectId (`_id`) erfolgen?
+
 ## Wie interagiert der Benutzer mit der Datenbank?
 
-Der Benutzer interagiert über ein Webinterface mit der Datenbank. TODO:
-Screenshot
+Der Benutzer interagiert über ein Webinterface mit der Datenbank.
+
+TODO: Screenshot
 
 # Datenmodellierung
 
@@ -62,13 +65,13 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
 
 - `League`
     - `id`
-    - `name` (Land und Name, z.B. "Switzerland Super League")
+    - `name` (Land und Name, z.B. «Switzerland Super League»)
 - `Match`
     - `id` (Primärschlüssel)
     - `league_id` (Fremdschlüssel auf `League`)
-    - `season` (Saison, z.B. "2009/2010")
+    - `season` (Saison, z.B. «2009/2010»)
     - `stage` (Spieltag, z.B. 18)
-    - `date` (Date-Time mit fehlender Uhrzeit, z.B. "2010-03-30 00:00:00")
+    - `date` (Date-Time mit fehlender Uhrzeit, z.B. «2010-03-30 00:00:00»)
     - `home_team_api_id` (Fremdschlüssel auf `Team`)
     - `away_team_api_id` (dito)
     - `home_team_goal` (erzielte Tore, z.B. 3)
@@ -78,10 +81,10 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
 - `Player`
     - `player_api_id` (Primärschlüssel)
     - `player_name`
-    - `birthday` (Date-Time mit fehlender Uhrzeit, z.B. "1991-07-19 00:00:00")
+    - `birthday` (Date-Time mit fehlender Uhrzeit, z.B. «1991-07-19 00:00:00»)
 - `Team`
-    - `team_long_name` (Name der Mannschaft, z.B. "Real Madrid CF")
-    - `team_short_name` (Kürzel der Mannschaft, z.B. "REA")
+    - `team_long_name` (Name der Mannschaft, z.B. «Real Madrid CF»)
+    - `team_short_name` (Kürzel der Mannschaft, z.B. «REA»)
 
 Das komplette Schema ist auf
 [Kaggle](https://www.kaggle.com/hugomathien/soccer/data) ersichtlich.
@@ -95,7 +98,7 @@ Dabei entstehen zwei Arten von Dokumenten:
 - `match`
     - `league_id`
     - `season`
-    - `date` (die leere Uhrzeitangabe "00:00:00" wird abgeschnitten)
+    - `date` (die leere Uhrzeitangabe «00:00:00» wird abgeschnitten)
     - `round`
     - `home_team` (der String wird UTF-8 kodiert)
     - `away_team` (dito)
@@ -193,7 +196,7 @@ interagieren. Hierbei werden nur lesende Zugriffe angeboten.
 
 ## Wie können Transaktionen parallel/konkurrierend verarbeitet werden?
 
-Es sind nur lesende Abfragen möglich. Diese können beliebig parallelisiert
+Es sind nur lesende Abfragen möglich. Diese können somit beliebig parallelisiert
 werden.
 
 # Systemarchitektur
@@ -202,9 +205,11 @@ werden.
 
 Das System wurde mit Docker aufgebaut. Es basiert auf dem Image
 `debian:jessie-slim`. Als Packages werden u.a. `mongodb`, `python3` und
-`python3-pip` installiert. Dazu kommt `vim` zum Programmieren innerhalb des
-Containers (was bei der Migration hilfreich war) und `curl` zum Aufrufen der
-Web-API innerhalb des Containers (was beim Testen hilfreich war).
+`python3-pip` installiert. Der statische Content (das Web-Interface) wird mit
+`webfs`, einem minimalistischen Webserver, ausgeliefert. Dazu kommt `vim` zum
+Programmieren innerhalb des Containers (was bei der Migration hilfreich war) und
+`curl` zum Aufrufen der Web-API innerhalb des Containers (was beim Testen
+hilfreich war).
 
 Neben den Debian-Packages werden folgende Python-Packages installiert:
 
@@ -215,17 +220,26 @@ Neben den Debian-Packages werden folgende Python-Packages installiert:
 
 Zur Ausführung der Migration und des Webservers wird ein Benutzer namens
 `developer` angelegt. Das Migrationsskript und die Skripts für die REST-API
-werden in den Docker container kopiert. Das `data`-Verzeichnis wird als Volume
-eingehängt (im Mac-Branch wird stattdessen die Datenbank in den Container
-hineinkopiert, da es mit Docker auf Mac Probleme gibt, wenn MongoDB auf ein
-Volume schreibend zugreifen möchte).
+werden in den Docker-Container kopiert. Nach der Migration werden die
+vorgenommenen Änderungen per `commit` in das Image festgeschrieben, sodass die
+Daten der MongoDB nach dem Neustart des Servers immer noch vorhanden sind. Dies
+könnte man auch über ein Volume lösen, was jedoch unter Mac OS nicht
+funktioniert, zumal die Migration schreibend auf ein Volume zugreifen muss:
 
-Die REST-API wird über den Port 8000 freigegeben. Beim Start des Containers wird
-das Skript `server-start.sh` gestartet, das sowohl die MongoDB-Instanz als auch
-den Webserver startet. Dabei wird das Log der Web-Applikation laufend auf die
-Standardausgabe geschrieben. (Der Container läuft interaktiv und nicht als
-Daemon, sodass die Logs sofort ersichtlich sind und der Container per Ctrl-C
-wieder beendet werden kann.)
+    So it’s pointless trying to tell mongo, via docker, to mount a local data
+    volume, as the above bug means mongo isn’t going to be able to access it.
+    (careful reading of the Docker Hub mongo docs may allow you to divine this, but
+    it’s not at all obvious)
+
+[Quelle](https://iainhunter.wordpress.com/2016/01/12/avoiding-pitfalls-running-mongo-3-2-in-docker-on-osx/)
+
+Die REST-API wird über den Port 8000, der statische Content über Port 8001
+freigegeben. Beim Start des Containers wird das Skript `server-start.sh`
+ausgeführt, das sowohl die MongoDB-Instanz als auch die beiden Webserver
+startet. Dabei wird das Log der Web-Applikation laufend auf die Standardausgabe
+geschrieben. (Der Container läuft interaktiv und nicht als Daemon, sodass die
+Logs sofort ersichtlich sind und der Container per Ctrl-C wieder beendet werden
+kann.)
 
 ## Wie kann die Effizienz von Datenanfragen optimiert werden?
 
@@ -237,8 +251,29 @@ wieder beendet werden kann.)
 
 ## Vergleichen Sie ihre NoSQL-Technologie mit SQL-Datenbanken.
 
+TODO
+
 # Schlussfolgerungen
 
 ## Was haben Sie erreicht, und welche Erkenntnisse haben sie dabei gewonnen?
 
+- Das Aufsetzen einer Docker-Umgebung braucht viel Zeit, gerade wenn sie auf
+  verschiedenen Betriebssystemen ausgeführt werden soll. Auf Linux lief die
+  Docker-Umgebung am zuverlässigsten, für Mac OS mussten einige Workarounds
+  vorgenommen werden, die auch auf Linux zuverlässig funktionierten und so
+  wieder zusammengeführt werden konnten. Fazit: Kann die Docker-Umgebung
+  zunächst unter Mac OS zum Laufen gebracht werden, sollte sie auch unter Linux
+  funktionieren.
+- AJAX-Requests funktionieren nur, wenn Protokoll, Hostname und Portnummer der
+  anfragenden und angefragten Ressourcen identisch sind. Dies kann zwar zu
+  Testzwecken mit einem Plugin umgangen werden, scheitert jedoch im produktiven
+  Einsatz. Fazit: Will man AJAX-Requests verwenden, sollte _ein gemeinsamer_
+  Webserver für die REST-API und den statischen Content verwendet werden.
+- Bei der Migration kann es performanter sein Daten, auf die oft zugegriffen
+  wird, anfangs in den Speicher zu laden statt jeweils bei Bedarf aus der
+  Datenbank zu lesen. Bei grossen Datenmengen könnte jedoch der Speicher knapp
+  werden.
+
 ## Wie beurteilt ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
+
+TODO
