@@ -1,3 +1,9 @@
+Das Projekt ist auf [GitHub](https://github.com/patrickbucher/mongomir-pytkovic)
+verfügbar. Das
+[README](https://github.com/patrickbucher/mongomir-pytkovic/blob/master/README.md)
+gibt Auskunft, wie man die Anwendung zum Laufen bringen kann. Auf MacOS und
+Windows ist eine virtuelle _Docker Machine_ vorausgesetzt.
+
 # Einführung
 
 ## Was ist der Kontext, warum ist das Projekt relevant, und worum geht es?
