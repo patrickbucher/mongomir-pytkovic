@@ -206,10 +206,9 @@ werden.
 Das System wurde mit Docker aufgebaut. Es basiert auf dem Image
 `debian:jessie-slim`. Als Packages werden u.a. `mongodb`, `python3` und
 `python3-pip` installiert. Der statische Content (das Web-Interface) wird mit
-`webfs`, einem minimalistischen Webserver, ausgeliefert. Dazu kommt `vim` zum
-Programmieren innerhalb des Containers (was bei der Migration hilfreich war) und
-`curl` zum Aufrufen der Web-API innerhalb des Containers (was beim Testen
-hilfreich war).
+`nginx` ausgeliefert. Dazu kommt `vim` zum Programmieren innerhalb des
+Containers (was bei der Migration hilfreich war) und `curl` zum Aufrufen der
+Web-API innerhalb des Containers (was beim Testen hilfreich war).
 
 Neben den Debian-Packages werden folgende Python-Packages installiert:
 
@@ -233,8 +232,18 @@ funktioniert, zumal die Migration schreibend auf ein Volume zugreifen muss:
 
 [Quelle](https://iainhunter.wordpress.com/2016/01/12/avoiding-pitfalls-running-mongo-3-2-in-docker-on-osx/)
 
-Die REST-API wird über den Port 8000, der statische Content über Port 8001
-freigegeben. Beim Start des Containers wird das Skript `server-start.sh`
+Die REST-API wird innerhalb des Containers über den Port 8000, der statische
+Content über Port 8001 angeboten. Da der statische Content und die REST-API über
+einen unterschiedlichen Port angeboten werden, wird die [Same-origin
+policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy)
+verletzt. (Diese besagt, dass eine Seite nur AJAX-Aufrufe auf eine Ressourcen
+ausführen darf, die das gleiche Protokoll, den gleichen Hostname und den
+gleichen Port verwenden.) Aus diesem Grund ist `nginx` so konfiguriert, dass er
+alle Requests mit einer URL gemäss dem Muster `/api/*` an `localhost:8000` und
+somit zum `gunicorn`-Server weiterleitet. Aus diesem Grund wird aus dem
+Container nur Port 8001 nach aussen freigegeben.
+
+Beim Start des Containers wird das Skript `server-start.sh`
 ausgeführt, das sowohl die MongoDB-Instanz als auch die beiden Webserver
 startet. Dabei wird das Log der Web-Applikation laufend auf die Standardausgabe
 geschrieben. (Der Container läuft interaktiv und nicht als Daemon, sodass die
@@ -268,7 +277,8 @@ TODO
   anfragenden und angefragten Ressourcen identisch sind. Dies kann zwar zu
   Testzwecken mit einem Plugin umgangen werden, scheitert jedoch im produktiven
   Einsatz. Fazit: Will man AJAX-Requests verwenden, sollte _ein gemeinsamer_
-  Webserver für die REST-API und den statischen Content verwendet werden.
+  Webserver für die REST-API und den statischen Content verwendet oder eine
+  entsprechende Weiterleitung konfiguriert werden.
 - Bei der Migration kann es performanter sein Daten, auf die oft zugegriffen
   wird, anfangs in den Speicher zu laden statt jeweils bei Bedarf aus der
   Datenbank zu lesen. Bei grossen Datenmengen könnte jedoch der Speicher knapp
