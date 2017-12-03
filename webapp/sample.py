@@ -24,4 +24,4 @@ class MatchResource:
         resp.media = pprint.pformat(mongo_db.matches.find_one(), indent = 4)
 
 api = falcon.API()
-api.add_route('/match', MatchResource())
+api.add_route('/api/match', MatchResource())

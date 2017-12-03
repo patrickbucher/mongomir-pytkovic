@@ -1,10 +1,10 @@
 #!/bin/sh
 
-SERVER_LOG="$LOGDIR/webfsd.out"
+SERVER_LOG="$LOGDIR/nginx-error.log"
 
 $BINDIR/mongo-start.sh &
 $BINDIR/gunicorn-start.sh &
-webfsd -p 8001 -r $APPDIR -l "$SERVER_LOG" -j -f index.html
+nginx
 
 while [ ! -f "$SERVER_LOG" ] ;
 do

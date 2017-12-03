@@ -2,7 +2,7 @@ $(document).ready(function() {
     $('.search-btn').on('click', function(event) {
         console.log('click');
         $.ajax({
-            url: 'http://localhost:8000/match',
+            url: 'http://localhost:8001/api/match',
             type: 'GET',
             dataType: 'json',
             success: function (data) {
