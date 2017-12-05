@@ -4,6 +4,12 @@ $BINDIR/mongo-start.sh &
 $BINDIR/gunicorn-start.sh &
 nginx
 
-touch "$LOGDIR/gunicorn.out" "$LOGDIR/gunicorn.err" "$LOGDIR/falcon.out" "$LOGDIR/mongo.out" "$LOGDIR/mongo.err" "$LOGDIR/nginx-error.log" "$LOGDIR/nginx-access.log"
+touch "$LOGDIR/gunicorn.out"
+touch "$LOGDIR/gunicorn.err"
+touch "$LOGDIR/falcon.out"
+touch "$LOGDIR/mongo.out"
+touch "$LOGDIR/mongo.err"
+touch "$LOGDIR/nginx-error.log"
+touch "$LOGDIR/nginx-access.log"
 
-tail -f "$LOGDIR/gunicorn.out" -f "$LOGDIR/gunicorn.err" -f "$LOGDIR/falcon.out" -f "$LOGDIR/mongo.out" -f "$LOGDIR/mongo.err" -f "$LOGDIR/nginx-error.log" -f "$LOGDIR/nginx-access.log"
+eval "$BINDIR/tailall.sh $LOGDIR/*"
