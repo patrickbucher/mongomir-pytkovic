@@ -1,4 +1,4 @@
-FROM debian:jessie-slim
+FROM debian:stable-slim
 MAINTAINER Patrick Bucher "patrick.bucher@stud.hslu.ch"
 
 ENV BINDIR /home/developer/bin
@@ -11,6 +11,7 @@ COPY config/apt.conf /etc/apt/apt.conf
 COPY config/.vimrc /home/developer/
 
 RUN apt-get update && apt-get install -y wget curl mongodb sqlite3 python3 python3-pip nginx vim
+RUN pip3 install --upgrade setuptools
 RUN pip3 install falcon gunicorn pymongo sqlite3client
 RUN useradd -m developer
 
