@@ -19,3 +19,21 @@ db.leagues.aggregate([{$lookup: {
             foreignField: "league_id",
             as: "matches_in_league"
 }}])
+
+Summe:
+
+// Anzahl matches pro spieler
+
+db.matches.aggregate([ { 
+    $group: { 
+        _id: "$_id", 
+        total: { 
+            $sum: 1 
+        } 
+    } 
+} ] )
+
+
+Unterabfrage:
+
+// evt in abfrage oben?
