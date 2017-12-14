@@ -4,6 +4,7 @@ import sqlite3
 from pymongo import MongoClient
 import os
 from datetime import datetime
+import time
 
 # SQLite connection and setup
 datdir = os.environ['DATDIR']
@@ -58,7 +59,9 @@ def to_match_dict(row, all_players):
     match = {}
     match['league_id'] = row['league_id']
     match['season'] = row['season']
-    match['date'] = to_date_str(row['date'])
+    date_str = to_date_str(row['date'])
+    match['date'] = date_str
+    match['date_timestamp'] = to_timestamp(date_str)
     match['round'] = row['stage']
     match['home_team'] = row['home_team_name'].encode('utf-8')
     match['away_team'] = row['away_team_name'].encode('utf-8')
@@ -115,6 +118,10 @@ def get_match_query():
 def to_date_str(datetime_str):
     dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
     return dt.strftime('%d.%m.%Y')
+
+def to_timestamp(date_str):
+    dt = datetime.strptime(date_str, '%d.%m.%Y')
+    return time.mktime(dt.timetuple())
 
 def split_league_name(country_league):
     split = country_league.index(' ')
