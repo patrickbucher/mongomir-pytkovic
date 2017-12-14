@@ -54,8 +54,6 @@ Da die Aufgabenstellung auch eine Abfrage mit einem Join umfasst, wird
 zusätzlich die Entität `League` migriert. Zu jedem Spiel wird ein Fremdschlüssel
 zur jeweiligen Liga abgespeichert.
 
-TODO: muss der Join über die ObjectId (`_id`) erfolgen?
-
 ## Wie interagiert der Benutzer mit der Datenbank?
 
 Der Benutzer interagiert über ein Webinterface mit der Datenbank.
@@ -105,6 +103,7 @@ Dabei entstehen zwei Arten von Dokumenten:
     - `league_id`
     - `season`
     - `date` (die leere Uhrzeitangabe «00:00:00» wird abgeschnitten)
+    - `date_timestamp` (das gleiche Datum als Timestamp zur Sortierung)
     - `round`
     - `home_team` (der String wird UTF-8 kodiert)
     - `away_team` (dito)
@@ -154,6 +153,8 @@ Das Skript läuft folgendermassen ab:
 
 ## Wie werden Daten anhand einer Query abgefragt?
 
+### SQLite
+
 Die Hauptabfrage auf die Tabelle `Match` mit Joins auf `Player` sieht
 folgendermassen aus:
 
@@ -188,6 +189,10 @@ Die Abfrage auf die Tabelle `League`:
 ```sql
 select id, name from League
 ```
+
+### MongoDB
+
+TODO: MongoDB-Queries einfügen
 
 # Konsistenzsicherung
 
@@ -229,14 +234,8 @@ werden in den Docker-Container kopiert. Nach der Migration werden die
 vorgenommenen Änderungen per `commit` in das Image festgeschrieben, sodass die
 Daten der MongoDB nach dem Neustart des Servers immer noch vorhanden sind. Dies
 könnte man auch über ein Volume lösen, was jedoch unter Mac OS nicht
-funktioniert, zumal die Migration schreibend auf ein Volume zugreifen muss:
-
-    So it’s pointless trying to tell mongo, via docker, to mount a local data
-    volume, as the above bug means mongo isn’t going to be able to access it.
-    (careful reading of the Docker Hub mongo docs may allow you to divine this, but
-    it’s not at all obvious)
-
-[Quelle](https://iainhunter.wordpress.com/2016/01/12/avoiding-pitfalls-running-mongo-3-2-in-docker-on-osx/)
+funktioniert, zumal die Migration schreibend auf ein Volume zugreifen muss
+([Quelle](https://iainhunter.wordpress.com/2016/01/12/avoiding-pitfalls-running-mongo-3-2-in-docker-on-osx/)).
 
 Die REST-API wird innerhalb des Containers über den Port 8000, der statische
 Content über Port 8001 angeboten. Da der statische Content und die REST-API über
@@ -261,6 +260,7 @@ kann.)
 - Wie bereits bei der Migration beschrieben wurde, werden die Spieler zu Beginn
   in eine Liste geladen. Dadurch können rechenintensive Joins bzw. Unterabfragen
   eingespart werden.
+- TODO: Weitere
 
 # Vergleich mit relationalen Datenbanken
 
