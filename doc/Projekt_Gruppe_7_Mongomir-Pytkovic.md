@@ -35,10 +35,12 @@ die JSON-Datenstrukturen abspeichert.
 
 ## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
 
-- Der Benutzer gibt einen Spielernamen oder einen regulären Ausdruck in ein
-  Web-Interface ein und bekommt sämtliche Spielergebnisse angezeigt, in denen
-  der jeweilige Spieler (oder _die_ jeweiligen Spieler im Falle eines regulären
-  Ausdrucks oder mehrfach vorkommender Namen) beteiligt war(en).
+- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein 
+  und bekommt sämtliche Spielergebnisse angezeigt, in denen
+  der jeweilige Spieler beteiligt war(en).
+- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein
+  und bekommt das Geburtsdatum des Spielers
+- Der Benutzer erhält die Anzahl Spiele pro League
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
 
@@ -192,7 +194,41 @@ select id, name from League
 
 ### MongoDB
 
-TODO: MongoDB-Queries einfügen
+Abfrage des Geburtsdatum eines Spielers. In folgendem Beispiel vom Spieler "Sinan Bolat".
+
+```mongo
+db.matches.findOne({"home_players.name": "Sinan Bolat"},{"home_players.$id": 1}).home_players[0].birthday
+
+db.matches.findOne({"away_players.name" : "Sinan Bolat"},{"away_players.$id": 1}).away_players[0].birthday
+```
+
+Die Abfrage für die Anzahl Spiele pro League.
+
+```mongo
+db.matches.aggregate([ { 
+    $group: { 
+        _id: "$league_id", 
+        total: { 
+            $sum: 1 
+        } 
+    } 
+} ] )
+```
+
+Die Abfrage für alle Spiele für einen Spieler. In folgendem Beispiel vom Spieler "Sinan Bolat".
+
+```mongo
+db.matches.aggregate([{$lookup: {
+            from: "leagues",
+            localField: "league_id",
+            foreignField: "id",
+            as: "matches_league"
+}},
+{"$project": {"_id": 0, "date": 1, "date_timestamp": 1, "matches_league.league": 1, "matches_league.country": 1, "round": 1, "home_team": 1, "home_goals": 1, "away_team": 1, "away_goals": 1, "home_players": 1, "away_players": 1}},
+{"$match": {"$or": [{"home_players.name" : "Sinan Bolat"}, {"aways_players.name": "Sinan Bolat"}]}},
+{"$sort": {date_timestamp: -1}}
+])
+```
 
 # Konsistenzsicherung
 
