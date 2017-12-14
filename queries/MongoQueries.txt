@@ -15,8 +15,9 @@ db.matches.aggregate([{$lookup: {
             foreignField: "id",
             as: "matches_league"
 }},
-{"$project": {"_id": 0, "date": 1, "matches_league.league": 1, "matches_league.country": 1, "round": 1, "home_goals": 1, "away_goals": 1, "home_players": 1, "away_players": 1}},
-{"$match": {"$or": [{"home_players.name" : "Sinan Bolat"}, {"aways_players.name": "Sinan Bolat"}]}}
+{"$project": {"_id": 0, "date": 1, "date_timestamp": 1, "matches_league.league": 1, "matches_league.country": 1, "round": 1, "home_goals": 1, "away_goals": 1, "home_players": 1, "away_players": 1}},
+{"$match": {"$or": [{"home_players.name" : "Sinan Bolat"}, {"aways_players.name": "Sinan Bolat"}]}},
+{"$sort": {date_timestamp: -1}}
 ])
 
 Anzahl:
