@@ -4,6 +4,8 @@ verfügbar. Das
 gibt Auskunft, wie man die Anwendung zum Laufen bringen kann. Auf MacOS und
 Windows ist eine virtuelle _Docker Machine_ vorausgesetzt.
 
+\newpage
+
 # Einführung
 
 ## Was ist der Kontext, warum ist das Projekt relevant, und worum geht es?
@@ -35,10 +37,12 @@ die JSON-Datenstrukturen abspeichert.
 
 ## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
 
-- Der Benutzer gibt einen Spielernamen oder einen regulären Ausdruck in ein
-  Web-Interface ein und bekommt sämtliche Spielergebnisse angezeigt, in denen
-  der jeweilige Spieler (oder _die_ jeweiligen Spieler im Falle eines regulären
-  Ausdrucks oder mehrfach vorkommender Namen) beteiligt war(en).
+- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein 
+  und bekommt sämtliche Spielergebnisse angezeigt, in denen
+  der jeweilige Spieler beteiligt war(en).
+- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein
+  und bekommt das Geburtsdatum des Spielers
+- Der Benutzer erhält die Anzahl Spiele pro League
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
 
@@ -64,6 +68,8 @@ TODO: Screenshot
 
 ## Welches Datenmodell (ER) liegt ihrem Projekt zugrunde?
 
+![Auszug aus dem ER-Modell](er-diagramm.png)
+
 Dies ist ein Auszug aus dem ER-Modell, der nur die Tabellen und Spalten enthält,
 die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
 
@@ -87,6 +93,7 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
     - `player_name`
     - `birthday` (Date-Time mit fehlender Uhrzeit, z.B. «1991-07-19 00:00:00»)
 - `Team`
+    - `team_api_id` (Primärschlüssel)
     - `team_long_name` (Name der Mannschaft, z.B. «Real Madrid CF»)
     - `team_short_name` (Kürzel der Mannschaft, z.B. «REA»)
 
@@ -192,7 +199,80 @@ select id, name from League
 
 ### MongoDB
 
-TODO: MongoDB-Queries einfügen
+Abfrage des Geburtsdatum eines Spielers. In folgendem Beispiel vom Spieler "Sinan Bolat".
+
+```js
+db.matches.findOne({
+  "home_players.name": "Sinan Bolat"
+}, {
+  "home_players.$id": 1
+}).home_players[0].birthday
+
+db.matches.findOne({
+  "away_players.name": "Sinan Bolat"
+}, {
+  "away_players.$id": 1
+}).away_players[0].birthday
+```
+
+Die Abfrage für die Anzahl Spiele pro League.
+
+```js
+db.matches.aggregate([{
+  $group: {
+    _id: "$league_id",
+    total: {
+      $sum: 1
+    }
+  }
+}])
+```
+
+Die Abfrage für alle Spiele für einen Spieler. In folgendem Beispiel vom Spieler "Sinan Bolat".
+
+```js
+db.matches.aggregate([{
+    $lookup: {
+      from: "leagues",
+      localField: "league_id",
+      foreignField: "id",
+      as: "matches_league"
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "date": 1,
+      "date_timestamp": 1,
+      "matches_league.league": 1,
+      "matches_league.country": 1,
+      "round": 1,
+      "home_team": 1,
+      "home_goals": 1,
+      "away_team": 1,
+      "away_goals": 1,
+      "home_players": 1,
+      "away_players": 1
+    }
+  },
+  {
+    "$match": {
+      "$or": [{
+          "home_players.name": "Sinan Bolat"
+        },
+        {
+          "aways_players.name": "Sinan Bolat"
+        }
+      ]
+    }
+  },
+  {
+    "$sort": {
+      date_timestamp: -1
+    }
+  }
+])
+```
 
 # Konsistenzsicherung
 
@@ -260,13 +340,17 @@ kann.)
 - Wie bereits bei der Migration beschrieben wurde, werden die Spieler zu Beginn
   in eine Liste geladen. Dadurch können rechenintensive Joins bzw. Unterabfragen
   eingespart werden.
-- TODO: Weitere
+- TODO: Weitere (Problem mit Document Size bei Join League zu Matches, umgekehrt
+  funktioniert es) [Quelle](https://docs.mongodb.com/v3.4/reference/limits/)
 
 # Vergleich mit relationalen Datenbanken
 
 ## Vergleichen Sie ihre NoSQL-Technologie mit SQL-Datenbanken.
 
-TODO
+- Dokumentdatenbanken wie MongoDB sind nicht für Joins im Sinne von SQL gemacht.
+  Aggregiert man die Daten bereits im Einfügen, kann auf Joins verzichtet
+  werden.
+- TODO: Weitere
 
 # Schlussfolgerungen
 
