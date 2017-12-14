@@ -6,34 +6,26 @@ ODER
 
 db.matches.findOne({"away_players.name" : "Sinan Bolat"},{"away_players.$id": 1}).away_players[0].birthday
 
-Matches:
-
-db.matches.find({$or: [{"home_players.name" : "Sinan Bolat"}, {"aways_players.name": "Sinan Bolat"}]},{"_id": 0, "date": 1, "round": 1, "home_goals": 1, "away_goals": 1}).sort({date: -1})
-
 
 JOIN:
 
-db.leagues.aggregate([{$lookup: {
-            from: "matches",
-            localField: "id",
-            foreignField: "league_id",
-            as: "matches_in_league"
-}}])
+db.matches.aggregate([{$lookup: {
+            from: "leagues",
+            localField: "league_id",
+            foreignField: "id",
+            as: "matches_league"
+}},
+{"$project": {"_id": 0, "date": 1, "matches_league.league": 1, "matches_league.country": 1, "round": 1, "home_goals": 1, "away_goals": 1, "home_players": 1, "away_players": 1}},
+{"$match": {"$or": [{"home_players.name" : "Sinan Bolat"}, {"aways_players.name": "Sinan Bolat"}]}}
+])
 
-Summe:
-
-// Anzahl matches pro spieler
+Anzahl:
 
 db.matches.aggregate([ { 
     $group: { 
-        _id: "$_id", 
+        _id: "$league_id", 
         total: { 
             $sum: 1 
         } 
     } 
 } ] )
-
-
-Unterabfrage:
-
-// evt in abfrage oben?
