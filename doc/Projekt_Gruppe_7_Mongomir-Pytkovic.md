@@ -4,6 +4,8 @@ verfügbar. Das
 gibt Auskunft, wie man die Anwendung zum Laufen bringen kann. Auf MacOS und
 Windows ist eine virtuelle _Docker Machine_ vorausgesetzt.
 
+\newpage
+
 # Einführung
 
 ## Was ist der Kontext, warum ist das Projekt relevant, und worum geht es?
@@ -64,6 +66,8 @@ TODO: Screenshot
 
 ## Welches Datenmodell (ER) liegt ihrem Projekt zugrunde?
 
+![Auszug aus dem ER-Modell](er-diagramm.png)
+
 Dies ist ein Auszug aus dem ER-Modell, der nur die Tabellen und Spalten enthält,
 die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
 
@@ -87,6 +91,7 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
     - `player_name`
     - `birthday` (Date-Time mit fehlender Uhrzeit, z.B. «1991-07-19 00:00:00»)
 - `Team`
+    - `team_api_id` (Primärschlüssel)
     - `team_long_name` (Name der Mannschaft, z.B. «Real Madrid CF»)
     - `team_short_name` (Kürzel der Mannschaft, z.B. «REA»)
 
@@ -260,13 +265,17 @@ kann.)
 - Wie bereits bei der Migration beschrieben wurde, werden die Spieler zu Beginn
   in eine Liste geladen. Dadurch können rechenintensive Joins bzw. Unterabfragen
   eingespart werden.
-- TODO: Weitere
+- TODO: Weitere (Problem mit Document Size bei Join League zu Matches, umgekehrt
+  funktioniert es)
 
 # Vergleich mit relationalen Datenbanken
 
 ## Vergleichen Sie ihre NoSQL-Technologie mit SQL-Datenbanken.
 
-TODO
+- Dokumentdatenbanken wie MongoDB sind nicht für Joins im Sinne von SQL gemacht.
+  Aggregiert man die Daten bereits im Einfügen, kann auf Joins verzichtet
+  werden.
+- TODO: Weitere
 
 # Schlussfolgerungen
 
