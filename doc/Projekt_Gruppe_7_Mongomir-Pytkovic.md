@@ -1,8 +1,21 @@
-Das Projekt ist auf [GitHub](https://github.com/patrickbucher/mongomir-pytkovic)
-verfügbar. Das
+# Autoren {-}
+
+- Lukas Arnold: Queries, REST-API
+- Patrick Bucher: Entwicklungsumgebung, Migration
+- Christopher James Christensen: Web-Interface
+- Jonas Kaiser 
+- Melvin Werthmüller: Queries
+
+# Informationen zum Projekt {-}
+
+Das Projekt wurde im Herbstsemester 2017 im Rahmen des Moduls Datenbanksysteme
+(DBS) bei Prof. Dr. Michael Kaufmann umgesetzt. Sämtliche Daten zu diesem
+Projekt sind auf [GitHub](https://github.com/patrickbucher/mongomir-pytkovic)
+verfügbar. Es basiert auf Docker. Das
 [README](https://github.com/patrickbucher/mongomir-pytkovic/blob/master/README.md)
-gibt Auskunft, wie man die Anwendung zum Laufen bringen kann. Auf MacOS und
-Windows ist eine virtuelle _Docker Machine_ vorausgesetzt.
+gibt Auskunft, wie man die Anwendung zum Laufen bringen kann. Auf Mac OS und
+Windows ist eine virtuelle _Docker Machine_ vorausgesetzt, auf Linux
+funktioniert es ohne weitere Vorkehrungen.
 
 \newpage
 
@@ -62,7 +75,7 @@ zur jeweiligen Liga abgespeichert.
 
 Der Benutzer interagiert über ein Webinterface mit der Datenbank.
 
-TODO: Screenshot
+![Screenshot des Webinterfaces](ui-screenshot.png)
 
 # Datenmodellierung
 
@@ -199,7 +212,7 @@ select id, name from League
 
 ### MongoDB
 
-Abfrage des Geburtsdatum eines Spielers. In folgendem Beispiel vom Spieler "Sinan Bolat".
+Abfrage des Geburtsdatum eines Spielers, hier für das Beispiel «Sinan Bolat».
 
 ```js
 db.matches.findOne({
@@ -228,7 +241,7 @@ db.matches.aggregate([{
 }])
 ```
 
-Die Abfrage für alle Spiele für einen Spieler. In folgendem Beispiel vom Spieler "Sinan Bolat".
+Die Abfrage für alle Spiele eines Spielers, hier für das Beispiel «Sinan Bolat».
 
 ```js
 db.matches.aggregate([{
@@ -257,19 +270,14 @@ db.matches.aggregate([{
   },
   {
     "$match": {
-      "$or": [{
-          "home_players.name": "Sinan Bolat"
-        },
-        {
-          "aways_players.name": "Sinan Bolat"
-        }
+      "$or": [
+        {"home_players.name": "Sinan Bolat"},
+        {"aways_players.name": "Sinan Bolat"}
       ]
     }
   },
   {
-    "$sort": {
-      date_timestamp: -1
-    }
+    "$sort": {date_timestamp: -1}
   }
 ])
 ```
