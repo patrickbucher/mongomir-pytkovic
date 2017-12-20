@@ -15,6 +15,10 @@ logpath = os.path.join(logdir, 'falcon.log')
 fh = logging.FileHandler(logpath)
 logger.addHandler(fh)
 
+class CorsMiddleware():
+    def process_request(self, request, response):
+        response.set_header('Access-Control-Allow-Origin', 'http://localhost:8001')
+
 class MatchResource:
     def on_get(self, req, resp):
         """Handles GET requests"""
@@ -58,6 +62,6 @@ class StatsResource:
             }
         }])))
 
-api = falcon.API()
+api = falcon.API(middleware=[CorsMiddleware()])
 api.add_route('/api/match', MatchResource())
 api.add_route('/api/stats', StatsResource())
