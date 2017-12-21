@@ -213,9 +213,10 @@ select id, name from League
 
 Abfrage des Geburtsdatum eines Spielers, hier für das Beispiel «Sinan Bolat».
 
-_Da der Spieler theoretisch immer nur im `away_players` Array auftreten kann, müssen
-in diesem Fall zwei Abfragen gemacht werden. So muss überprüft werden, dass das Resultat
-kein leeres Array ist, da es sonst einen Fehler beim Zugriff auf das erste Element gibt._
+Da der Spieler theoretisch immer nur im `away_players`-Array auftreten kann,
+müssen in diesem Fall zwei Abfragen gemacht werden. So muss überprüft werden,
+dass das Resultat kein leeres Array ist, da es sonst einen Fehler beim Zugriff
+auf das erste Element gibt.
 
 ```js
 db.matches.findOne({
@@ -353,8 +354,8 @@ kann.)
   in eine Liste geladen. Dadurch können rechenintensive Joins bzw. Unterabfragen
   eingespart werden.
 - Beim Join von League zu Match kam es zu einem Problem mit einem internen Limit
-  (BSON document size: 16MB)
-  [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents). Der
+  (BSON document size: 16MB
+  [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents)). Der
   umgekehrte Join von Match zu League funktionierte jedoch problemlos und
   schnell. Das liegt daran, dass die Anzahl Ligen sehr gering und die Anzahl
   Matches sehr gross ist.
