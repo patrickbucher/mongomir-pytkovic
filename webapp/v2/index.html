@@ -1,0 +1,124 @@
+<html>
+<head>
+    <style>
+        #container {
+            font-family: sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin: 0.5em;
+            font-size: 3em;
+        }
+        .search {
+            margin: auto;
+            width: 400px;
+        }
+        .search input {
+            width: 79%;
+        }
+        .search button {
+            width: 19%;
+        }
+        .list {
+            padding: 0.5em;
+        }
+        .item {
+            padding: 0.5em;
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
+            border-radius: 1px;
+            margin-bottom: 0.5em;
+        }
+        .item small {
+            color: gray;
+            text-align: center;
+            display: block;
+        }
+        .item p {
+            margin: 0;
+        }
+        .item-results {
+            display: flex;
+        }
+        .item-home {
+            flex: 1;
+            text-align: right;
+        }
+        .item-home.active {
+            color: green;
+        }
+        .item-away {
+            flex: 1;
+        }
+        .item-away.active {
+            color: green;
+        }
+        .item-seperator {
+            padding: .5em;
+            font-size: 3em;
+        }
+        .item-goals {
+            font-size: 3em;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Mongomir Pytkovic</h1>
+        <div class="search">
+            <input v-model="query" style="width: 300px">
+            <button v-on:click="getItems">Search</button>
+        </div>
+
+        <p v-if="isLoading">Loading ...</p>
+        <div v-else class="list">
+            <div class="item" v-for="item in items">
+                <div class="item-results">
+                    <div :class="'item-home' + (playedAsHomePlayer(item) ? ' active' : '')">
+                        <p class="item-goals" v-text="item.home_goals"></p>
+                        <p v-text="item.home_team"></p>
+                    </div>
+                    <div class="item-seperator">:</div>
+                    <div :class="'item-away' + (playedAsHomePlayer(item) ? '' : ' active')">
+                        <p class="item-goals" v-text="item.away_goals"></p>
+                        <p v-text="item.away_team"></p>
+                    </div>
+                </div>
+                <small v-text="item.date"></small>
+            </div>
+        </div>
+    </div>
+
+    <script src="/v2/vue.min.js"></script>
+    <script src="/v2/axios.min.js"></script>
+    <script> 
+        window.app = new Vue({
+            el: '#container',
+            data: {
+                query: 'Marc Wagemakers',
+                items: [],
+                isLoading: false
+            },
+            methods: {
+                getItems() {
+                    this.isLoading = true;
+                    let that = this;
+                    axios.get('http://localhost:8001/api/match?name=' + this.query)
+                        .then(function (response) {
+                            that.items = response.data;
+                            that.isLoading = false;
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }, 
+                playedAsHomePlayer(item) {
+                    let that = this;
+                    return item.home_players.filter(function (player) {
+                        return player.name == that.query;
+                    }).length > 0;
+                }
+            }
+        })
+    </script>
+</body>
+</html>
