@@ -41,7 +41,9 @@ class MatchResource:
                 "home_goals": 1,
                 "away_goals": 1,
                 "home_players": 1,
-                "away_players": 1
+                "away_players": 1,
+                "home_team": 1,
+                "away_team": 1
             }},
             {"$match": {
                 "$or": [{"home_players.name" : name}, {"away_players.name": name}]

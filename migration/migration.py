@@ -63,8 +63,8 @@ def to_match_dict(row, all_players):
     match['date'] = date_str
     match['date_timestamp'] = to_timestamp(date_str)
     match['round'] = row['stage']
-    match['home_team'] = row['home_team_name'].encode('utf-8')
-    match['away_team'] = row['away_team_name'].encode('utf-8')
+    match['home_team'] = row['home_team_name']
+    match['away_team'] = row['away_team_name']
     match['home_goals'] = row['home_team_goal']
     match['away_goals'] = row['away_team_goal']
     match['home_players'] = extract_players('hp', row, all_players)
