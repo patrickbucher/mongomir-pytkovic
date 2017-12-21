@@ -59,17 +59,22 @@
         .item-goals {
             font-size: 3em;
         }
+        .message {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div id="container">
         <h1>Mongomir Pytkovic</h1>
         <div class="search">
-            <input v-model="query" style="width: 300px">
-            <button v-on:click="getItems">Search</button>
+            <input v-model="query" v-on:keyup.enter="queryData" placeholder="Marc Wagemakers" style="width: 300px">
+            <button v-on:click="queryData">Suchen</button>
         </div>
 
-        <p v-if="isLoading">Loading ...</p>
+        <div v-if="isLoading" class="list">
+            <p class="message">Daten werden geladen ...</p>
+        </div>
         <div v-else class="list">
             <div class="item" v-for="item in items">
                 <div class="item-results">
@@ -85,6 +90,7 @@
                 </div>
                 <small v-text="item.date"></small>
             </div>
+            <p v-if="items.length == 0" class="message">Keine Daten für diesen Namen gefunden!</p>
         </div>
     </div>
 
@@ -94,12 +100,12 @@
         window.app = new Vue({
             el: '#container',
             data: {
-                query: 'Marc Wagemakers',
+                query: '',
                 items: [],
                 isLoading: false
             },
             methods: {
-                getItems() {
+                queryData() {
                     this.isLoading = true;
                     let that = this;
                     axios.get('http://localhost:8001/api/match?name=' + this.query)
