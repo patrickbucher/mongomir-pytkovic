@@ -133,6 +133,14 @@ h3 {
     background: rgba(150, 150, 150, 1);
 }
 
+.stats {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 .color-scheme {
     position: absolute;
     display: grid;

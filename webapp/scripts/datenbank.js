@@ -11,6 +11,9 @@ $(document).ready(function() {
                 console.log('success');
                 console.log(data);
                 console.log(JSON.parse(data.replace(/'/g, '"')));
+
+                
+
             },
             fail: function (data) {
                 console.log('error');
