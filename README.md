@@ -2,7 +2,7 @@
 
 DBS project using MongoDB, Python and the [European Soccer Database](https://www.kaggle.com/hugomathien/soccer) from Kaggle.
 
-Just run `make server` and visit [http://localhost:8001/](http://localhost:8001/match). (Mac users need to set up port forwarding to their docker machine.)
+Just run `make server` and visit [http://localhost:8001/v2](http://localhost:8001/v2). (Mac users need to set up port forwarding to their docker machine.)
 
 ## Docker
 
