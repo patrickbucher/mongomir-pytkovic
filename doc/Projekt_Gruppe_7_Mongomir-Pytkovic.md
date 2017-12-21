@@ -10,7 +10,7 @@
 Das Projekt wurde im Herbstsemester 2017 im Rahmen des Moduls Datenbanksysteme
 (DBS) bei Prof. Dr. Michael Kaufmann umgesetzt. Sämtliche Daten zu diesem
 Projekt sind auf [GitHub](https://github.com/patrickbucher/mongomir-pytkovic)
-verfügbar. Es basiert auf Docker. Das
+verfügbar. Die gesamte Entwicklungs- und Laufzeitumgebung basiert auf Docker. Das
 [README](https://github.com/patrickbucher/mongomir-pytkovic/blob/master/README.md)
 gibt Auskunft, wie man die Anwendung zum Laufen bringen kann. Auf Mac OS und
 Windows ist eine virtuelle _Docker Machine_ vorausgesetzt, auf Linux
@@ -213,6 +213,10 @@ select id, name from League
 
 Abfrage des Geburtsdatum eines Spielers, hier für das Beispiel «Sinan Bolat».
 
+_Da der Spieler theoretisch immer nur im `away_players` Array auftreten kann, müssen
+in diesem Fall zwei Abfragen gemacht werden. So muss überprüft werden, dass das Resultat
+kein leeres Array ist, da es sonst einen Fehler beim Zugriff auf das erste Element gibt._
+
 ```js
 db.matches.findOne({
   "home_players.name": "Sinan Bolat"
@@ -339,7 +343,7 @@ Beim Start des Containers wird das Skript `server-start.sh`
 ausgeführt, das sowohl die MongoDB-Instanz als auch die beiden Webserver
 startet. Dabei wird das Log der Web-Applikation laufend auf die Standardausgabe
 geschrieben. (Der Container läuft interaktiv und nicht als Daemon, sodass die
-Logs sofort ersichtlich sind und der Container per Ctrl-C wieder beendet werden
+Logs sofort ersichtlich sind und der Container per `Ctrl-C` wieder beendet werden
 kann.)
 
 ## Wie kann die Effizienz von Datenanfragen optimiert werden?
