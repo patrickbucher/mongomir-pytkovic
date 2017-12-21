@@ -17,14 +17,14 @@ logger.addHandler(fh)
 
 class CorsMiddleware():
     def process_request(self, request, response):
-        response.set_header('Access-Control-Allow-Origin', 'http://localhost:8001')
+        response.set_header('Access-Control-Allow-Origin', '*')
 
 class MatchResource:
     def on_get(self, req, resp):
         """Handles GET requests"""
         logger.debug('GET on /api/match')
         name = req.get_param('name')
-        resp.media = pprint.pformat(list(mongo_db.matches.aggregate([
+        resp.media = list(mongo_db.matches.aggregate([
             {"$lookup": {
                 "from": "leagues",
                 "localField": "league_id",
@@ -47,20 +47,20 @@ class MatchResource:
                 "$or": [{"home_players.name" : name}, {"away_players.name": name}]
             }},
             {"$sort": {"date_timestamp": -1}}
-        ])))
+        ]))
 
 class StatsResource:
     def on_get(self, req, resp):
         """Handles GET requests"""
         logger.debug('GET on /api/stats')
-        resp.media = pprint.pformat(list(mongo_db.matches.aggregate([{
+        resp.media = list(mongo_db.matches.aggregate([{
             "$group": {
                 "_id": "$league_id",
                 "total": {
                     "$sum": 1
                 }
             }
-        }])))
+        }]))
 
 api = falcon.API(middleware=[CorsMiddleware()])
 api.add_route('/api/match', MatchResource())
