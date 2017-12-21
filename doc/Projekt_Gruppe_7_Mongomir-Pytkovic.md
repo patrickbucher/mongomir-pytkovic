@@ -72,7 +72,7 @@ zur jeweiligen Liga abgespeichert.
 
 ## Wie interagiert der Benutzer mit der Datenbank?
 
-Der Benutzer interagiert über ein Webinterface mit der Datenbank.
+Der Benutzer interagiert über ein Web-Interface mit der Datenbank.
 
 ![Screenshot des Webinterfaces](ui-screenshot.png)
 
@@ -116,7 +116,7 @@ Das komplette Schema ist auf
 
 Das Python-Skript `migration.py` fragt die Ausgangsdatenbank über die
 `sqlite3`-Library ab und fügt sie mit der `pymongo`-Library in MongoDB über.
-Dabei entstehen zwei Arten von Dokumenten:
+Dabei entstehen zwei Collections:
 
 - `match`
     - `league_id`
@@ -142,8 +142,8 @@ Das Skript läuft folgendermassen ab:
 3. Es werden sämtliche Spieler in eine Liste geladen (`load_all_players()`)
     - Dies hat den Vorteil, dass beim Abfragen auf die Tabelle `Match` nicht 22
       mal ein Join auf die Tabelle `Spieler` bzw. eine Schleife mit 22
-      Unterabfragen gemacht werden muss. Diese Variante hat sich nämlich bei der
-      ersten Version des Skripts als äusserst imperformant erwiesen.
+      Unterabfragen gemacht werden muss. Diese Variante hat sich bei der ersten
+      Version des Skripts als imperformant erwiesen.
 4. Es werden sämtliche Spiele abgefragt und verarbeitet.
     - Mit dem Query aus `get_match_query()` werden sämtliche Spiele abgefragt,
       wobei Spiele ohne referenzierte Spieler ignoriert werden.
