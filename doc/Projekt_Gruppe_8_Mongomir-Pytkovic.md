@@ -1,6 +1,6 @@
 # Autoren {-}
 
-- Lukas Arnold: Queries, REST-API
+- Lukas Arnold: Queries, REST-API, Web-Interface
 - Patrick Bucher: Entwicklungsumgebung, Migration
 - Christopher James Christensen: Web-Interface
 - Melvin Werthmüller: Queries
@@ -23,10 +23,10 @@ funktioniert es ohne weitere Vorkehrungen.
 ## Was ist der Kontext, warum ist das Projekt relevant, und worum geht es?
 
 Im Projekt _Mongomir Pytkovic_ geht es darum, eine SQLite-Datenbank auf eine
-NoSQL-Datenbank zu migrieren und Anfragen auf diese abzusetzen und darzustellen.
-Der Name «Mongomir Pytkovic» bezieht sich auf den Nationaltrainer der Schweizer
-Fussballnationalmannschaft Vladimir Petkovic und die eingesetzten Technologien
-MongoDB und Python.
+NoSQL-Datenbank zu migrieren und Anfragen auf diese abzusetzen und die
+Ergebnisse davon darzustellen. Der Name «Mongomir Pytkovic» bezieht sich auf
+den Nationaltrainer der Schweizer Fussballnationalmannschaft Vladimir Petkovic
+und die eingesetzten Technologien MongoDB und Python.
 
 Als Datenbasis wird die [European Soccer
 Database](https://www.kaggle.com/hugomathien/soccer/data) verwendet. Hierbei
@@ -47,17 +47,17 @@ Die Datenbank wird nach [MongoDB](https://www.mongodb.com/) migriert. Hierbei
 handelt es sich um eine NoSQL-Datenbank -- genauer um eine Dokumentdatenbank,
 die JSON-Datenstrukturen abspeichert.
 
-## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
+## Welche Anwendungen (Use Case) unterstützt Ihre Datenbank?
 
 1. Der Benutzer gibt einen Spielernamen ein und bekommt sämtliche Spielergebnisse angezeigt, in denen der jeweilige Spieler beteiligt war.
-2. Der Benutzer gibt einen Spielernamen ein und bekommt das Geburtsdatum des Spielers.
-3. Der Benutzer erhält die Anzahl Spiele pro League.
+2. Der Benutzer gibt einen Spielernamen ein und erhält das Geburtsdatum des Spielers.
+3. Der Benutzer erhält die Anzahl Spiele pro Liga.
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
 
 Grundsätzlich sollen die Einträge der Tabelle `Match`, welche ein Spielergebnis
 repräsentiert, migriert werden. Die Tabelle `Match` enthält neben statistischen
-Angaben auch Spalten mit den einzelnen beteiligten Spieler als Fremdschlüssel
+Angaben auch Spalten mit den einzelnen beteiligten Spielern als Fremdschlüssel
 auf die Tabelle `Player`. Ziel der Migration ist es, diese
 Fremdschlüsselbeziehung zu beseitigen und die Spieler der am Spiel beteiligten
 Mannschaften direkt mit Namen und Geburtsdatum (zur Identifikation bei mehrfach
@@ -74,14 +74,15 @@ kann er den Namen eines Spielers eingeben. Ein Klick auf den _Search_-Button
 löst die Abfrage aus. Die gefundenen Matches werden unterhalb des Suchfeldes
 angezeigt.
 
-![Screenshot des Webinterfaces](ui-screenshot.png)
+![Screenshot des Web-Interfaces](ui-screenshot.png)
 
 # Datenmodellierung
 
-## Welches Datenmodell (ER) liegt ihrem Projekt zugrunde?
+## Welches Datenmodell (ER) liegt Ihrem Projekt zugrunde?
 
-Dies ist ein Auszug aus dem ER-Modell, der nur die Tabellen und Spalten enthält,
-die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
+Dies ist ein Auszug aus dem ER-Modell. Dabei werden nur die Tabellen und Spalten
+berücksichtigt, die auch tatsächlich in die Dokumentdatenbank migriert werden
+sollen:
 
 - `League`
     - `id`
@@ -112,10 +113,10 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
 Das komplette Schema ist auf
 [Kaggle](https://www.kaggle.com/hugomathien/soccer/data) ersichtlich.
 
-## Wie wird ihr Datenmodell in Ihrer Datenbank in ein Schema übersetzt?
+## Wie wird Ihr Datenmodell in Ihrer Datenbank in ein Schema übersetzt?
 
 Das Python-Skript `migration.py` fragt die Ausgangsdatenbank über die
-`sqlite3`-Library ab und fügt sie mit der `pymongo`-Library in MongoDB über.
+`sqlite3`-Library ab und führt sie mit der `pymongo`-Library in MongoDB über.
 Dabei entstehen zwei Collections:
 
 - `match`
@@ -124,8 +125,8 @@ Dabei entstehen zwei Collections:
     - `date` (die leere Uhrzeitangabe «00:00:00» wird abgeschnitten)
     - `date_timestamp` (das gleiche Datum als Timestamp zur Sortierung)
     - `round`
-    - `home_team` (der String wird UTF-8 kodiert)
-    - `away_team` (dito)
+    - `home_team`
+    - `away_team`
     - `home_goals`
     - `away_goals`
     - `home_players` und `away_players`
@@ -137,13 +138,13 @@ Dabei entstehen zwei Collections:
 
 Das Skript läuft folgendermassen ab:
 
-1. Die Verbindung zur SQLite-Datenbank wird erstellt.
-2. Die Verbindung zur MongoDB-Datenbank wird erstellt.
+1. Die Verbindung zur SQLite-Datenbank wird aufgebaut.
+2. Die Verbindung zur MongoDB-Datenbank wird aufgebaut.
 3. Es werden sämtliche Spieler in eine Liste geladen (`load_all_players()`)
     - Dies hat den Vorteil, dass beim Abfragen auf die Tabelle `Match` nicht 22
       mal ein Join auf die Tabelle `Spieler` bzw. eine Schleife mit 22
-      Unterabfragen gemacht werden muss. Diese Variante hat sich bei der ersten
-      Version des Skripts als imperformant erwiesen.
+      Unterabfragen gemacht werden muss. Denn diese Variante hat sich bei der
+      ersten Version des Skripts als imperformant erwiesen.
 4. Es werden sämtliche Spiele abgefragt und verarbeitet.
     - Mit dem Query aus `get_match_query()` werden sämtliche Spiele abgefragt,
       wobei Spiele ohne referenzierte Spieler ignoriert werden.
@@ -158,14 +159,14 @@ Das Skript läuft folgendermassen ab:
     - Die dabei neu erstellte ID des eingefügten `match`-Dokuments wird auf die
       Standardausgabe geloggt.
 5. Es werden sämtliche Ligen abgefragt und verarbeitet.
-    - Die `to_league_dict()` wird die JSON-Struktur zu einer Liga als
+    - In `to_league_dict()` wird die JSON-Struktur zu einer Liga als
       Python-Dictionary aufgebaut. Dabei wird der als erstes Wort im Liganamen
-      abgespeicherte Landesnamen abgespalten und in ein separates Feld
-      geschrieben (`split_league_name()`).
+      abgespeicherte Landesname abgespalten und in ein separates Feld
+      geschrieben (Funktion `split_league_name()`).
     - Das Dictionary wird in der MongoDB-Collection `leagues` abgelegt.
     - Die dabei neu erstellte ID des eingefügten `league`-Dokuments wird auf die
       Standardausgabe geloggt.
-6. Zum Schluss wird auf die Standardausgabe geloggt, wie viele `matches` und
+6. Zum Schluss wird auf der Standardausgabe geloggt, wie viele `matches` und
    `leagues` eingefügt wurden.
 
 # Datenbanksprachen
@@ -211,12 +212,12 @@ select id, name from League
 
 ### MongoDB
 
-Abfrage des Geburtsdatum eines Spielers, hier für das Beispiel «Sinan Bolat».
+Abfrage des Geburtsdatum eines Spielers, hier für das Beispiel «Sinan Bolat»:
 
-Da der Spieler theoretisch immer nur im `away_players`-Array auftreten kann,
-müssen in diesem Fall zwei Abfragen gemacht werden. So muss überprüft werden,
-dass das Resultat kein leeres Array ist, da es sonst einen Fehler beim Zugriff
-auf das erste Element gibt.
+(Da der Spieler theoretisch nur im `away_players`-Array auftreten kann, müssen
+in diesem Fall zwei Abfragen gemacht werden. So muss überprüft werden, dass das
+Resultat kein leeres Array ist, da es sonst einen Fehler beim Zugriff auf das
+erste Element gibt.)
 
 ```js
 db.matches.findOne({
@@ -232,7 +233,7 @@ db.matches.findOne({
 }).away_players[0].birthday
 ```
 
-Die Abfrage für die Anzahl Spiele pro League.
+Die Abfrage für die Anzahl Spiele pro Liga:
 
 ```js
 db.matches.aggregate([{
@@ -245,7 +246,7 @@ db.matches.aggregate([{
 }])
 ```
 
-Die Abfrage für alle Spiele eines Spielers, hier für das Beispiel «Sinan Bolat».
+Die Abfrage für alle Spiele eines Spielers, hier für das Beispiel «Sinan Bolat»:
 
 ```js
 db.matches.aggregate([{
@@ -308,9 +309,9 @@ werden, ohne dass Inkonsistenzen auftreten könnten. Die eingesetzten Webserver
 ## Wie ist der Server aufgebaut und wie wurde er installiert?
 
 Das System wurde mit Docker aufgebaut. Es basiert auf dem Image
-`debian:jessie-slim`. Als Packages werden u.a. `mongodb`, `python3` und
+`debian:stable-slim`. Als Packages werden u.a. `mongodb`, `python3` und
 `python3-pip` installiert. Der statische Content (das Web-Interface) wird mit
-`nginx` ausgeliefert. Dazu kommt `vim` zum Programmieren innerhalb des
+`nginx` ausgeliefert. Dazu kommen `vim` zum Programmieren innerhalb des
 Containers (was bei der Migration hilfreich war) und `curl` zum Aufrufen der
 Web-API innerhalb des Containers (was beim Testen hilfreich war).
 
@@ -334,19 +335,19 @@ Die REST-API wird innerhalb des Containers über den Port 8000, der statische
 Content über Port 8001 angeboten. Da der statische Content und die REST-API über
 einen unterschiedlichen Port angeboten werden, wird die [Same-origin
 policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy)
-verletzt. (Diese besagt, dass eine Seite nur AJAX-Aufrufe auf eine Ressourcen
+verletzt. (Diese besagt, dass eine Seite nur AJAX-Aufrufe auf eine Ressource
 ausführen darf, die das gleiche Protokoll, den gleichen Hostname und den
 gleichen Port verwenden.) Aus diesem Grund ist `nginx` so konfiguriert, dass er
 alle Requests mit einer URL gemäss dem Muster `/api/*` an `localhost:8000` und
-somit zum `gunicorn`-Server weiterleitet. Aus diesem Grund wird aus dem
-Container nur Port 8001 nach aussen freigegeben.
+somit zum `gunicorn`-Server weiterleitet. Deshalb wird aus dem Container nur
+Port 8001 nach aussen freigegeben.
 
 Beim Start des Containers wird das Skript `server-start.sh`
 ausgeführt, das sowohl die MongoDB-Instanz als auch die beiden Webserver
-startet. Dabei wird das Log der Web-Applikation laufend auf die Standardausgabe
-geschrieben. (Der Container läuft interaktiv und nicht als Daemon, sodass die
-Logs sofort ersichtlich sind und der Container per `Ctrl-C` wieder beendet werden
-kann.)
+startet. Dabei werden die Logs der Web-Applikation und der Datenbank laufend auf
+die Standardausgabe geschrieben. (Der Container läuft interaktiv und nicht als
+Daemon, sodass die Logs sofort ersichtlich sind und der Container per `Ctrl-C`
+wieder beendet werden kann.)
 
 ## Wie kann die Effizienz von Datenanfragen optimiert werden?
 
@@ -354,12 +355,12 @@ kann.)
   in eine Liste geladen. Dadurch können rechenintensive Joins bzw. Unterabfragen
   eingespart werden.
 - Beim Join von League zu Match kam es zu einem Problem mit einem internen Limit
-  (BSON document size: 16MB
+  (BSON document size: 16MB, 
   [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents)). Der
   umgekehrte Join von Match zu League funktionierte jedoch problemlos und
-  schnell. Das liegt daran, dass die Anzahl Ligen sehr gering und die Anzahl
-  Matches sehr gross ist.
-- Wäre die Datenbank gemäss dem Use-Case (alle Matches eines Spielers anzeigen)
+  schnell. Das liegt daran, dass die Anzahl Ligen mit 11 sehr gering und die Anzahl
+  Matches mit 24'396 sehr gross ist.
+- Wäre die Datenbank gemäss dem Use Case (alle Matches eines Spielers anzeigen)
   modelliert worden, wären die Abfragen effizienter. Denn das Sammeln der
   Matches pro Spieler hätte nur einmal (bei der Migration) stattfinden müssen
   und nicht bei jeder Abfrage. (Im Moment werden die Spieler zu jedem Match
@@ -367,10 +368,10 @@ kann.)
 
 # Vergleich mit relationalen Datenbanken
 
-## Vergleichen Sie ihre NoSQL-Technologie mit SQL-Datenbanken.
+## Vergleichen Sie Ihre NoSQL-Technologie mit SQL-Datenbanken.
 
 - Dokumentdatenbanken wie MongoDB sind nicht für Joins im Sinne von SQL gemacht.
-  Aggregiert man die Daten bereits im Einfügen, kann auf Joins verzichtet
+  Aggregiert man die Daten bereits beim Einfügen, kann auf Joins verzichtet
   werden.
 - Die Abfragesprache von MongoDB basiert auf JavaScript/JSON, nicht auf SQL.
 - MongoDB kennt keine Tabellen sondern Collections. Die Einträge einer
@@ -380,7 +381,7 @@ kann.)
 
 # Schlussfolgerungen
 
-## Was haben Sie erreicht, und welche Erkenntnisse haben sie dabei gewonnen?
+## Was haben Sie erreicht, und welche Erkenntnisse haben Sie dabei gewonnen?
 
 - Das Aufsetzen einer Docker-Umgebung braucht viel Zeit, gerade wenn sie auf
   verschiedenen Betriebssystemen ausgeführt werden soll. Auf Linux lief die
@@ -399,8 +400,12 @@ kann.)
   wird, anfangs in den Speicher zu laden statt jeweils bei Bedarf aus der
   Datenbank zu lesen. Bei grossen Datenmengen könnte jedoch der Speicher knapp
   werden.
+- Die JSON-Datenstruktur einer NoSQL-Datenbank sollte möglichst so modelliert
+  werden, dass sie dem Use Case am besten entspricht. In unserem Beispiel werden
+  die Spieler eines Matches abgespeichert. Zweckdienlicher wäre es aber gewesen,
+  die Matches eines Spielers abzuspeichern.
 
-## Wie beurteilt ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
+## Wie beurteilt Ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
 
 Eine Beurteilung der Technologie ist nach diesem kleinen Projekt nur sehr
 eingeschränkt möglich. Bei unserer konkreten Anwendung ergaben sich folgende
@@ -418,10 +423,10 @@ Vor- und Nachteile.
 
 ### Nachteile
 
-- Einige Use-Cases lassen sich mit MongoDB weniger einfach als mit SQL (Joins)
+- Einige Use Cases lassen sich mit MongoDB weniger einfach als mit SQL (Joins)
   bzw. überhaupt nicht (Unterabfragen) umsetzen.
-- Bei aufwändinen Joins bzw. `lookup`-Operationen kann MongoDB schnell an seine
+- Bei aufwändigen Joins bzw. `lookup`-Operationen kann MongoDB schnell an seine
   Grenzen stossen. Joins sollten eher sparsam eingesetzt werden.
-- Da die Daten zu einer Collection heterogen sein können, hat man keine
-  Garantie, ob alle benötigten Felder zu jedem Eintrag existieren. Auf dieses
+- Da die Daten einer Collection heterogen sein können, hat man keine
+  Garantie, dass alle benötigten Felder zu jedem Eintrag existieren. Auf dieses
   Problem muss im Anwendungscode reagiert werden.
