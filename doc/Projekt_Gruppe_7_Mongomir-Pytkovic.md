@@ -3,7 +3,6 @@
 - Lukas Arnold: Queries, REST-API
 - Patrick Bucher: Entwicklungsumgebung, Migration
 - Christopher James Christensen: Web-Interface
-- Jonas Kaiser 
 - Melvin Werthmüller: Queries
 
 # Informationen zum Projekt {-}
@@ -352,8 +351,11 @@ kann.)
 - Wie bereits bei der Migration beschrieben wurde, werden die Spieler zu Beginn
   in eine Liste geladen. Dadurch können rechenintensive Joins bzw. Unterabfragen
   eingespart werden.
-- TODO: Weitere (Problem mit Document Size bei Join League zu Matches, umgekehrt
-  funktioniert es) [Quelle](https://docs.mongodb.com/v3.4/reference/limits/)
+- Beim Join von League zu Match kam es zu einem Problem mit einem internen Limit
+  (BSON document size: 16MB)
+  [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents). Der
+  umgekehrte Join von Match zu League funktionierte jedoch problemlos und
+  schnell.
 
 # Vergleich mit relationalen Datenbanken
 
@@ -362,7 +364,9 @@ kann.)
 - Dokumentdatenbanken wie MongoDB sind nicht für Joins im Sinne von SQL gemacht.
   Aggregiert man die Daten bereits im Einfügen, kann auf Joins verzichtet
   werden.
-- TODO: Weitere
+- Die Abfragesprache von MongoDB basiert auf JavaScript/JSON, nicht auf SQL.
+- MongoDB kennt keine Tabellen sondern Collections. Die Einträge einer
+  Collection können sich in ihrer Datenstruktur unterscheiden.
 
 # Schlussfolgerungen
 
@@ -388,4 +392,17 @@ kann.)
 
 ## Wie beurteilt ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
 
-TODO
+### Vorteile
+
+- Das Ablegen von Datensätzen bzw. Dokumenten auf MongoDB gestaltet sich sehr
+  einfach, da man im Gegensatz zu SQL nicht eine Reihe von Feldern angeben muss,
+  sondern einfach eine aggregierte Datenstruktur übergeben kann.
+- Die Abfragesprache und Datenstruktur von MongoDB basiert auf JavaScript bzw.
+  JSON, was den Einstieg erleichtern kann.
+
+### Nachteile
+
+- Einige Use-Cases lassen sich mit MongoDB weniger einfach als mit SQL (Joins)
+  bzw. überhaupt nicht (Unterabfragen) umsetzen.
+- Bei aufwändinen Joins bzw. `lookup`-Operationen kann MongoDB schnell an seine
+  Grenzen stossen. Joins sollten eher sparsam eingesetzt werden.
