@@ -30,7 +30,7 @@ MongoDB und Python.
 
 Als Datenbasis wird die [European Soccer
 Database](https://www.kaggle.com/hugomathien/soccer/data) verwendet. Hierbei
-handelt es sich um ein Beispieldatenbank der Machine-Learning-Plattform und
+handelt es sich um eine Beispieldatenbank der Machine-Learning-Plattform und
 -Community [Kaggle](https://www.kaggle.com/). Die Datenbank soll es einem
 Trainer erlauben, Ergebnisse von Fussballspielen zu finden, in denen ein
 bestimmter Spieler beteiligt war.
@@ -49,12 +49,9 @@ die JSON-Datenstrukturen abspeichert.
 
 ## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
 
-- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein 
-  und bekommt sämtliche Spielergebnisse angezeigt, in denen
-  der jeweilige Spieler beteiligt war(en).
-- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein
-  und bekommt das Geburtsdatum des Spielers
-- Der Benutzer erhält die Anzahl Spiele pro League
+1. Der Benutzer gibt einen Spielernamen ein und bekommt sämtliche Spielergebnisse angezeigt, in denen der jeweilige Spieler beteiligt war.
+2. Der Benutzer gibt einen Spielernamen ein und bekommt das Geburtsdatum des Spielers.
+3. Der Benutzer erhält die Anzahl Spiele pro League.
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
 
@@ -72,15 +69,16 @@ zur jeweiligen Liga abgespeichert.
 
 ## Wie interagiert der Benutzer mit der Datenbank?
 
-Der Benutzer interagiert über ein Webinterface mit der Datenbank.
+Der Benutzer interagiert über ein Web-Interface mit der Datenbank. Im Suchfeld
+kann er den Namen eines Spielers eingeben. Ein Klick auf den _Search_-Button
+löst die Abfrage aus. Die gefundenen Matches werden unterhalb des Suchfeldes
+angezeigt.
 
 ![Screenshot des Webinterfaces](ui-screenshot.png)
 
 # Datenmodellierung
 
 ## Welches Datenmodell (ER) liegt ihrem Projekt zugrunde?
-
-![Auszug aus dem ER-Modell](er-diagramm.png)
 
 Dies ist ein Auszug aus dem ER-Modell, der nur die Tabellen und Spalten enthält,
 die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
@@ -109,6 +107,8 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
     - `team_long_name` (Name der Mannschaft, z.B. «Real Madrid CF»)
     - `team_short_name` (Kürzel der Mannschaft, z.B. «REA»)
 
+![Auszug aus dem ER-Modell](er-diagramm.png)
+
 Das komplette Schema ist auf
 [Kaggle](https://www.kaggle.com/hugomathien/soccer/data) ersichtlich.
 
@@ -116,7 +116,7 @@ Das komplette Schema ist auf
 
 Das Python-Skript `migration.py` fragt die Ausgangsdatenbank über die
 `sqlite3`-Library ab und fügt sie mit der `pymongo`-Library in MongoDB über.
-Dabei entstehen zwei Arten von Dokumenten:
+Dabei entstehen zwei Collections:
 
 - `match`
     - `league_id`
@@ -142,8 +142,8 @@ Das Skript läuft folgendermassen ab:
 3. Es werden sämtliche Spieler in eine Liste geladen (`load_all_players()`)
     - Dies hat den Vorteil, dass beim Abfragen auf die Tabelle `Match` nicht 22
       mal ein Join auf die Tabelle `Spieler` bzw. eine Schleife mit 22
-      Unterabfragen gemacht werden muss. Diese Variante hat sich nämlich bei der
-      ersten Version des Skripts als äusserst imperformant erwiesen.
+      Unterabfragen gemacht werden muss. Diese Variante hat sich bei der ersten
+      Version des Skripts als imperformant erwiesen.
 4. Es werden sämtliche Spiele abgefragt und verarbeitet.
     - Mit dem Query aus `get_match_query()` werden sämtliche Spiele abgefragt,
       wobei Spiele ohne referenzierte Spieler ignoriert werden.
@@ -299,7 +299,8 @@ interagieren. Hierbei werden nur lesende Zugriffe angeboten.
 ## Wie können Transaktionen parallel/konkurrierend verarbeitet werden?
 
 Es sind nur lesende Abfragen möglich. Diese können somit beliebig parallelisiert
-werden.
+werden, ohne dass Inkonsistenzen auftreten könnten. Die eingesetzten Webserver
+`gunicorn` und `nginx` unterstützen parallele Verarbeitung.
 
 # Systemarchitektur
 
@@ -355,7 +356,8 @@ kann.)
   (BSON document size: 16MB)
   [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents). Der
   umgekehrte Join von Match zu League funktionierte jedoch problemlos und
-  schnell.
+  schnell. Das liegt daran, dass die Anzahl Ligen sehr gering und die Anzahl
+  Matches sehr gross ist.
 - Wäre die Datenbank gemäss dem Use-Case (alle Matches eines Spielers anzeigen)
   modelliert worden, wären die Abfragen effizienter. Denn das Sammeln der
   Matches pro Spieler hätte nur einmal (bei der Migration) stattfinden müssen
@@ -399,6 +401,10 @@ kann.)
 
 ## Wie beurteilt ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
 
+Eine Beurteilung der Technologie ist nach diesem kleinen Projekt nur sehr
+eingeschränkt möglich. Bei unserer konkreten Anwendung ergaben sich folgende
+Vor- und Nachteile.
+
 ### Vorteile
 
 - Das Ablegen von Datensätzen bzw. Dokumenten auf MongoDB gestaltet sich sehr
@@ -406,6 +412,8 @@ kann.)
   sondern einfach eine aggregierte Datenstruktur übergeben kann.
 - Die Abfragesprache und Datenstruktur von MongoDB basiert auf JavaScript bzw.
   JSON, was den Einstieg erleichtern kann.
+- Es ist viel gute Dokumentation und weitere Hilfestellung zu MongoDB online
+  auffindbar.
 
 ### Nachteile
 
