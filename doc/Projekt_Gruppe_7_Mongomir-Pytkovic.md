@@ -49,12 +49,9 @@ die JSON-Datenstrukturen abspeichert.
 
 ## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
 
-- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein 
-  und bekommt sämtliche Spielergebnisse angezeigt, in denen
-  der jeweilige Spieler beteiligt war(en).
-- Der Benutzer gibt einen Spielernamen in ein Web-Interface ein
-  und bekommt das Geburtsdatum des Spielers
-- Der Benutzer erhält die Anzahl Spiele pro League
+Der Benutzer gibt einen Spielernamen in ein Web-Interface ein und bekommt
+sämtliche Spielergebnisse angezeigt, in denen der jeweilige Spieler beteiligt
+war.
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
 
@@ -355,7 +352,8 @@ kann.)
   (BSON document size: 16MB)
   [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents). Der
   umgekehrte Join von Match zu League funktionierte jedoch problemlos und
-  schnell.
+  schnell. Das liegt daran, dass die Anzahl Ligen sehr gering und die Anzahl
+  Matches sehr gross ist.
 - Wäre die Datenbank gemäss dem Use-Case (alle Matches eines Spielers anzeigen)
   modelliert worden, wären die Abfragen effizienter. Denn das Sammeln der
   Matches pro Spieler hätte nur einmal (bei der Migration) stattfinden müssen
@@ -399,6 +397,9 @@ kann.)
 
 ## Wie beurteilt ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
 
+Eine Beurteilung der Technologie ist nach diesem kleinen Projekt nur sehr
+eingeschränkt möglich.
+
 ### Vorteile
 
 - Das Ablegen von Datensätzen bzw. Dokumenten auf MongoDB gestaltet sich sehr
@@ -406,6 +407,8 @@ kann.)
   sondern einfach eine aggregierte Datenstruktur übergeben kann.
 - Die Abfragesprache und Datenstruktur von MongoDB basiert auf JavaScript bzw.
   JSON, was den Einstieg erleichtern kann.
+- Es ist viel gute Dokumentation und weitere Hilfestellung zu MongoDB online
+  auffindbar.
 
 ### Nachteile
 
