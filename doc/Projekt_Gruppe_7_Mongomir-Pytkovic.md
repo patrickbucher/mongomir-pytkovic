@@ -49,9 +49,9 @@ die JSON-Datenstrukturen abspeichert.
 
 ## Welche Anwendungen (Use Case) unterstützt ihre Datenbank?
 
-Der Benutzer gibt einen Spielernamen in ein Web-Interface ein und bekommt
-sämtliche Spielergebnisse angezeigt, in denen der jeweilige Spieler beteiligt
-war.
+1. Der Benutzer gibt einen Spielernamen ein und bekommt sämtliche Spielergebnisse angezeigt, in denen der jeweilige Spieler beteiligt war.
+2. Der Benutzer gibt einen Spielernamen ein und bekommt das Geburtsdatum des Spielers.
+3. Der Benutzer erhält die Anzahl Spiele pro League.
 
 ## Welche Daten werden migriert/eingefügt, und wie genau?
 
@@ -69,15 +69,16 @@ zur jeweiligen Liga abgespeichert.
 
 ## Wie interagiert der Benutzer mit der Datenbank?
 
-Der Benutzer interagiert über ein Web-Interface mit der Datenbank.
+Der Benutzer interagiert über ein Web-Interface mit der Datenbank. Im Suchfeld
+kann er den Namen eines Spielers eingeben. Ein Klick auf den _Search_-Button
+löst die Abfrage aus. Die gefundenen Matches werden unterhalb des Suchfeldes
+angezeigt.
 
 ![Screenshot des Webinterfaces](ui-screenshot.png)
 
 # Datenmodellierung
 
 ## Welches Datenmodell (ER) liegt ihrem Projekt zugrunde?
-
-![Auszug aus dem ER-Modell](er-diagramm.png)
 
 Dies ist ein Auszug aus dem ER-Modell, der nur die Tabellen und Spalten enthält,
 die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
@@ -105,6 +106,8 @@ die auch tatsächlich in die Dokumentdatenbank migriert werden sollen:
     - `team_api_id` (Primärschlüssel)
     - `team_long_name` (Name der Mannschaft, z.B. «Real Madrid CF»)
     - `team_short_name` (Kürzel der Mannschaft, z.B. «REA»)
+
+![Auszug aus dem ER-Modell](er-diagramm.png)
 
 Das komplette Schema ist auf
 [Kaggle](https://www.kaggle.com/hugomathien/soccer/data) ersichtlich.
@@ -296,7 +299,8 @@ interagieren. Hierbei werden nur lesende Zugriffe angeboten.
 ## Wie können Transaktionen parallel/konkurrierend verarbeitet werden?
 
 Es sind nur lesende Abfragen möglich. Diese können somit beliebig parallelisiert
-werden.
+werden, ohne dass Inkonsistenzen auftreten könnten. Die eingesetzten Webserver
+`gunicorn` und `nginx` unterstützen parallele Verarbeitung.
 
 # Systemarchitektur
 
