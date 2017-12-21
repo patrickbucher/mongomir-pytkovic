@@ -30,7 +30,7 @@ MongoDB und Python.
 
 Als Datenbasis wird die [European Soccer
 Database](https://www.kaggle.com/hugomathien/soccer/data) verwendet. Hierbei
-handelt es sich um ein Beispieldatenbank der Machine-Learning-Plattform und
+handelt es sich um eine Beispieldatenbank der Machine-Learning-Plattform und
 -Community [Kaggle](https://www.kaggle.com/). Die Datenbank soll es einem
 Trainer erlauben, Ergebnisse von Fussballspielen zu finden, in denen ein
 bestimmter Spieler beteiligt war.
@@ -402,7 +402,8 @@ kann.)
 ## Wie beurteilt ihre Gruppe die gewählte Datenbanktechnologie, und was sind Vor- und Nachteile?
 
 Eine Beurteilung der Technologie ist nach diesem kleinen Projekt nur sehr
-eingeschränkt möglich.
+eingeschränkt möglich. Bei unserer konkreten Anwendung ergaben sich folgende
+Vor- und Nachteile.
 
 ### Vorteile
 
