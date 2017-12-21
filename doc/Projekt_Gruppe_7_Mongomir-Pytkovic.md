@@ -23,10 +23,10 @@ funktioniert es ohne weitere Vorkehrungen.
 ## Was ist der Kontext, warum ist das Projekt relevant, und worum geht es?
 
 Im Projekt _Mongomir Pytkovic_ geht es darum, eine SQLite-Datenbank auf eine
-NoSQL-Datenbank zu migrieren und Anfragen auf diese NoSQL-Datenbank abzusetzen
-und darzustellen. Der Name «Mongomir Pytkovic» bezieht sich auf den
-Nationaltrainer der Schweizer Fussballnationalmannschaft Vladimir Petkovic und
-die eingesetzten Technologien MongoDB und Python.
+NoSQL-Datenbank zu migrieren und Anfragen auf diese abzusetzen und darzustellen.
+Der Name «Mongomir Pytkovic» bezieht sich auf den Nationaltrainer der Schweizer
+Fussballnationalmannschaft Vladimir Petkovic und die eingesetzten Technologien
+MongoDB und Python.
 
 Als Datenbasis wird die [European Soccer
 Database](https://www.kaggle.com/hugomathien/soccer/data) verwendet. Hierbei
@@ -356,6 +356,11 @@ kann.)
   [Quelle](https://docs.mongodb.com/v3.4/reference/limits/#bson-documents). Der
   umgekehrte Join von Match zu League funktionierte jedoch problemlos und
   schnell.
+- Wäre die Datenbank gemäss dem Use-Case (alle Matches eines Spielers anzeigen)
+  modelliert worden, wären die Abfragen effizienter. Denn das Sammeln der
+  Matches pro Spieler hätte nur einmal (bei der Migration) stattfinden müssen
+  und nicht bei jeder Abfrage. (Im Moment werden die Spieler zu jedem Match
+  gespeichert, nicht die Matches pro Spieler.)
 
 # Vergleich mit relationalen Datenbanken
 
@@ -408,3 +413,6 @@ kann.)
   bzw. überhaupt nicht (Unterabfragen) umsetzen.
 - Bei aufwändinen Joins bzw. `lookup`-Operationen kann MongoDB schnell an seine
   Grenzen stossen. Joins sollten eher sparsam eingesetzt werden.
+- Da die Daten zu einer Collection heterogen sein können, hat man keine
+  Garantie, ob alle benötigten Felder zu jedem Eintrag existieren. Auf dieses
+  Problem muss im Anwendungscode reagiert werden.
