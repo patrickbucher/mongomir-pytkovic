@@ -275,7 +275,7 @@ db.matches.aggregate([{
     "$match": {
       "$or": [
         {"home_players.name": "Sinan Bolat"},
-        {"aways_players.name": "Sinan Bolat"}
+        {"away_players.name": "Sinan Bolat"}
       ]
     }
   },
