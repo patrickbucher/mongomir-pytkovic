@@ -367,6 +367,8 @@ kann.)
 - Die Abfragesprache von MongoDB basiert auf JavaScript/JSON, nicht auf SQL.
 - MongoDB kennt keine Tabellen sondern Collections. Die Einträge einer
   Collection können sich in ihrer Datenstruktur unterscheiden.
+- MongoDB bietet viel weniger Abfragemöglichkeiten als SQL. So ist es
+  beispielsweise nicht möglich alle Matches mit dem gleichen Datum zu finden.
 
 # Schlussfolgerungen
 
