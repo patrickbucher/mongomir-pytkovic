@@ -49,7 +49,7 @@ def load_all_players():
     cursor = connection.cursor()
     for row in cursor.execute(players_query):
         id = int(row['id'])
-        name = row['name'].replace("'", "’")
+        name = row['name'].replace("'", '’')
         birthday = to_date_str(row['birthday'])
         players[id] = {'name': name, 'birthday': birthday}
 
