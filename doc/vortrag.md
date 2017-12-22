@@ -1,0 +1,29 @@
+- Datengrundlage (PB)
+    - European Soccer Database von Kaggle
+    - SQLite-Datenbank
+    - Ausgangsschema
+- Architektur (PB)
+    - Docker-Image basierend auf Debian
+    - falcon/gunicorn (REST-API)
+    - nginx (statischer Content, Proxy)
+    - Logging
+    - Probleme
+        - Same-origin policy
+        - Persistenz (Mac OS)
+- Migraton (PB)
+    - Python-Skript
+    - Dokumentstruktur
+    - Caching von Spielern
+- Abfragen (MW)
+    - Geburtsdatum eines Spielers
+    - Anzahl Spiele pro Liga
+    - Spiele, an denen ein Spieler teilgenommen hat
+- API (LA)
+    - Funktionsweise
+    - `/api/match`
+    - `/api/stats`
+- Benutzeroberfläche (CJC)
+    - Funktionsweise
+    - Live-Demo (mit Live-Kommentar)
+        - `git clone`
+        - `make server`
